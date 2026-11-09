@@ -41,7 +41,7 @@ export function AppPoolTab() {
 
   useEffect(() => {
     fetchApps();
-  }, [fetchApps]);
+  }, [fetchApps, user?.id]);
 
   const handleJoinTest = async (app: AppItem, e?: React.MouseEvent) => {
     if (e) e.stopPropagation();

@@ -6,7 +6,7 @@ import { useApp } from "@/context/AppContext";
 import { X, ShieldCheck, Mail, ArrowRight, Sparkles, RefreshCw } from "lucide-react";
 
 export function AuthModal() {
-  const { isAuthModalOpen, setIsAuthModalOpen, refreshUser, showToast, loginAsDemo } = useApp();
+  const { isAuthModalOpen, setIsAuthModalOpen, refreshUser, showToast, loginAsDemo, setUser } = useApp();
 
   const [step, setStep] = useState<"welcome" | "input" | "otp">("input");
   const [email, setEmail] = useState("");
@@ -108,6 +108,9 @@ export function AuthModal() {
       const data = await res.json();
 
       if (res.ok && data.success) {
+        if (data.user) {
+          setUser(data.user);
+        }
         showToast("Giriş başarılı! Hoş geldiniz.", "success");
         await refreshUser();
         setIsAuthModalOpen(false);

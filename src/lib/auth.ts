@@ -1,4 +1,4 @@
-import { cookies } from "next/headers";
+import { cookies, headers } from "next/headers";
 import { SignJWT, jwtVerify } from "jose";
 import { prisma } from "./prisma";
 
@@ -32,9 +32,29 @@ export async function signSessionToken(payload: { id: string; email: string; rol
  */
 export async function setSessionCookie(token: string) {
   const cookieStore = await cookies();
+
+  let isHttps = false;
+  try {
+    const headersList = await headers();
+    const proto = headersList.get("x-forwarded-proto");
+    const referer = headersList.get("referer");
+    if (proto === "https" || referer?.startsWith("https://")) {
+      isHttps = true;
+    }
+  } catch (e) {
+    // fallback if headers() unavailable
+  }
+
+  // Allow explicit override via environment variable if desired
+  if (process.env.COOKIE_SECURE === "true") {
+    isHttps = true;
+  } else if (process.env.COOKIE_SECURE === "false") {
+    isHttps = false;
+  }
+
   cookieStore.set(COOKIE_NAME, token, {
     httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
+    secure: isHttps,
     sameSite: "lax",
     path: "/",
     maxAge: 30 * 24 * 60 * 60, // 30 days

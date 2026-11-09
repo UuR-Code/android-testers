@@ -50,6 +50,7 @@ interface Toast {
 
 interface AppContextType {
   user: User | null;
+  setUser: (user: User | null) => void;
   isLoadingUser: boolean;
   refreshUser: () => Promise<void>;
   logout: () => Promise<void>;
@@ -141,7 +142,13 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
 
   const refreshUser = useCallback(async () => {
     try {
-      const res = await fetch("/api/auth/me");
+      const res = await fetch(`/api/auth/me?_t=${Date.now()}`, {
+        cache: "no-store",
+        headers: {
+          "Cache-Control": "no-cache",
+          Pragma: "no-cache",
+        },
+      });
       if (res.ok) {
         const data = await res.json();
         setUser(data.user);
@@ -179,6 +186,9 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       });
       const data = await res.json();
       if (res.ok && data.success) {
+        if (data.user) {
+          setUser(data.user);
+        }
         await refreshUser();
         showToast(`Giriş yapıldı: ${email}`, "success");
         setIsAuthModalOpen(false);
@@ -197,6 +207,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     <AppContext.Provider
       value={{
         user,
+        setUser,
         isLoadingUser,
         refreshUser,
         logout,
