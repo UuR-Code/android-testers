@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80" width="80" height="80">
+  <rect width="80" height="80" rx="20" fill="url(#grad-blue)" />
+  <defs>
+    <linearGradient id="grad-blue" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#3B82F6" />
+      <stop offset="100%" stop-color="#2563EB" />
+    </linearGradient>
+  </defs>
+  <!-- Gamepad icon -->
+  <path d="M22 34C22 28.4772 26.4772 24 32 24H48C53.5228 24 58 28.4772 58 34V46C58 51.5228 53.5228 56 48 56C45.5 56 43.5 54 41 51H39C36.5 54 34.5 56 32 56C26.4772 56 22 51.5228 22 46V34Z" fill="white" />
+  <rect x="29" y="34" width="4" height="12" rx="2" fill="#2563EB" />
+  <rect x="25" y="38" width="12" height="4" rx="2" fill="#2563EB" />
+  <circle cx="51" cy="38" r="2.5" fill="#2563EB" />
+  <circle cx="47" cy="44" r="2.5" fill="#2563EB" />
+</svg>

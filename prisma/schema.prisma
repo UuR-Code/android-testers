@@ -1,0 +1,124 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                  String                @id @default(cuid())
+  email               String                @unique
+  name                String?
+  avatar              String?
+  credit_balance      Int                   @default(0)
+  role                String                @default("USER") // "USER" or "ADMIN"
+  email_notifications Boolean               @default(true)
+  created_at          DateTime              @default(now())
+  updated_at          DateTime              @updatedAt
+
+  apps                App[]                 @relation("UserApps")
+  participations      TestParticipation[]   @relation("UserParticipations")
+  credit_transactions CreditTransaction[]   @relation("UserCreditTransactions")
+  notifications       Notification[]        @relation("UserNotifications")
+}
+
+model App {
+  id                   String                @id @default(cuid())
+  owner_id             String
+  owner                User                  @relation("UserApps", fields: [owner_id], references: [id], onDelete: Cascade)
+  name                 String
+  category             String                @default("Genel")
+  description          String?
+  icon_url             String?
+  opt_in_url           String
+  store_url            String?
+  status               String                @default("ACTIVE") // "DRAFT", "ACTIVE", "PAUSED", "COMPLETED"
+  target_tester_count  Int                   @default(20)
+  current_tester_count Int                   @default(0)
+  note_for_testers     String?
+  created_at           DateTime              @default(now())
+  updated_at           DateTime              @updatedAt
+
+  participations       TestParticipation[]   @relation("AppParticipations")
+  credit_transactions  CreditTransaction[]   @relation("AppCreditTransactions")
+}
+
+model TestParticipation {
+  id                  String                @id @default(cuid())
+  app_id              String
+  app                 App                   @relation("AppParticipations", fields: [app_id], references: [id], onDelete: Cascade)
+  user_id             String
+  user                User                  @relation("UserParticipations", fields: [user_id], references: [id], onDelete: Cascade)
+  status              String                @default("JOINED") // "JOINED", "INVITED", "CLAIMED_TESTED", "APPROVED", "REJECTED"
+  joined_at           DateTime              @default(now())
+  invited_at          DateTime?
+  claimed_tested_at   DateTime?
+  approved_at         DateTime?
+  rejected_at         DateTime?
+  feedback_type       String?               // "NO_PROBLEM", "BUG_FOUND", "SUGGESTION"
+  feedback_text       String?
+  rejection_reason    String?
+  last_reminder_at    DateTime?
+  created_at          DateTime              @default(now())
+  updated_at          DateTime              @updatedAt
+
+  @@unique([app_id, user_id])
+}
+
+model CreditTransaction {
+  id                  String                @id @default(cuid())
+  user_id             String
+  user                User                  @relation("UserCreditTransactions", fields: [user_id], references: [id], onDelete: Cascade)
+  app_id              String?
+  app                 App?                  @relation("AppCreditTransactions", fields: [app_id], references: [id], onDelete: SetNull)
+  participation_id    String?
+  amount              Int                   // e.g. +1, -10
+  balance_after       Int
+  transaction_type    String                // "TEST_REWARD", "APP_PUBLISH", "ADMIN_ADJUSTMENT", "STARTER_CREDIT"
+  description         String
+  created_at          DateTime              @default(now())
+}
+
+model OtpCode {
+  id                  String                @id @default(cuid())
+  email               String
+  code                String
+  expires_at          DateTime
+  used                Boolean               @default(false)
+  created_at          DateTime              @default(now())
+}
+
+model Notification {
+  id                  String                @id @default(cuid())
+  user_id             String
+  user                User                  @relation("UserNotifications", fields: [user_id], references: [id], onDelete: Cascade)
+  type                String                // "NEW_TESTER", "INVITATION_READY", "REMINDER", "TEST_APPROVED", "TEST_REJECTED", "SYSTEM"
+  title               String
+  message             String
+  link                String?
+  is_read             Boolean               @default(false)
+  created_at          DateTime              @default(now())
+}
+
+model EmailLog {
+  id                  String                @id @default(cuid())
+  to_email            String
+  subject             String
+  template            String
+  status              String                @default("SENT") // "SENT", "FAILED", "SIMULATED"
+  error_message       String?
+  created_at          DateTime              @default(now())
+}
+
+model SystemSetting {
+  id                       String           @id @default("default")
+  app_creation_cost        Int              @default(10)
+  reward_per_approved_test Int              @default(1)
+  target_tester_count      Int              @default(20)
+  max_active_apps_per_user Int              @default(5)
+  reminder_cooldown_hours  Int              @default(24)
+  allow_new_registrations  Boolean          @default(true)
+  updated_at               DateTime         @updatedAt
+}

@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80" width="80" height="80">
+  <rect width="80" height="80" rx="20" fill="url(#grad-green)" />
+  <defs>
+    <linearGradient id="grad-green" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#10B981" />
+      <stop offset="100%" stop-color="#059669" />
+    </linearGradient>
+  </defs>
+  <!-- Shopping basket -->
+  <path d="M22 34H58L53 56H27L22 34Z" fill="white" />
+  <path d="M30 34L40 20L50 34" stroke="white" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" fill="none" />
+  <line x1="33" y1="39" x2="33" y2="51" stroke="#059669" stroke-width="3" stroke-linecap="round" />
+  <line x1="40" y1="39" x2="40" y2="51" stroke="#059669" stroke-width="3" stroke-linecap="round" />
+  <line x1="47" y1="39" x2="47" y2="51" stroke="#059669" stroke-width="3" stroke-linecap="round" />
+</svg>

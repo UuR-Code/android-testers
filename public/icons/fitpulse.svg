@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80" width="80" height="80">
+  <rect width="80" height="80" rx="20" fill="url(#grad-red)" />
+  <defs>
+    <linearGradient id="grad-red" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#EF4444" />
+      <stop offset="100%" stop-color="#DC2626" />
+    </linearGradient>
+  </defs>
+  <!-- Heart pulse icon -->
+  <path d="M40 56L26.5 42.5C23.5 39.5 23.5 34.5 26.5 31.5C29.5 28.5 34.5 28.5 37.5 31.5L40 34L42.5 31.5C45.5 28.5 50.5 28.5 53.5 31.5C56.5 34.5 56.5 39.5 53.5 42.5L40 56Z" fill="white" />
+</svg>
