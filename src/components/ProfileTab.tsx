@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useApp } from "@/context/AppContext";
 import {
   Coins,
@@ -14,6 +14,7 @@ import {
   ShieldAlert,
   Check,
   RefreshCw,
+  Download,
 } from "lucide-react";
 
 export function ProfileTab() {
@@ -32,6 +33,32 @@ export function ProfileTab() {
   const [isMyAppsOpen, setIsMyAppsOpen] = useState(false);
   const [isFaqOpen, setIsFaqOpen] = useState(false);
   const [isTogglingNotification, setIsTogglingNotification] = useState(false);
+  const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
+
+  useEffect(() => {
+    const handler = (e: Event) => {
+      e.preventDefault();
+      setDeferredPrompt(e);
+    };
+    window.addEventListener("beforeinstallprompt", handler);
+    return () => window.removeEventListener("beforeinstallprompt", handler);
+  }, []);
+
+  const handleInstallApp = async () => {
+    if (deferredPrompt) {
+      deferredPrompt.prompt();
+      const choice = await deferredPrompt.userChoice;
+      if (choice?.outcome === "accepted") {
+        showToast("Uygulama başarıyla ana ekrana eklendi!", "success");
+      }
+      setDeferredPrompt(null);
+    } else {
+      showToast(
+        "Tarayıcınızın menüsünden (⋮ veya Paylaş) 'Ana Ekrana Ekle' seçeneğini kullanabilirsiniz.",
+        "info"
+      );
+    }
+  };
 
   if (!user) {
     return (
@@ -224,6 +251,27 @@ export function ProfileTab() {
               <ChevronRight className="w-4 h-4 text-purple-500" />
             </button>
           )}
+
+          {/* Uygulamayı Yükle (PWA) */}
+          <button
+            onClick={handleInstallApp}
+            className="w-full p-4 flex items-center justify-between text-left hover:bg-slate-50 transition-colors"
+          >
+            <div className="flex items-center gap-3">
+              <div className="w-9 h-9 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center">
+                <Download className="w-4 h-4" />
+              </div>
+              <div>
+                <span className="text-xs font-bold text-slate-800 block">
+                  Uygulamayı Cihaza Yükle (PWA)
+                </span>
+                <span className="text-[11px] text-slate-400">
+                  Ana ekrana ekle, daha hızlı ve tam ekran kullan
+                </span>
+              </div>
+            </div>
+            <ChevronRight className="w-4 h-4 text-slate-400" />
+          </button>
 
           {/* Yardım & SSS */}
           <button
