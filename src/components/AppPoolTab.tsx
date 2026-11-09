@@ -199,8 +199,8 @@ export function AppPoolTab() {
         </div>
       </div>
 
-      {/* 3. APPS LIST */}
-      <div className="px-4 space-y-3">
+      {/* 3. APPS LIST (2 COLUMNS - E-COMMERCE STYLE) */}
+      <div className="px-3 pb-8">
         {isLoading ? (
           <div className="py-12 flex flex-col items-center justify-center text-slate-400">
             <RefreshCw className="w-6 h-6 animate-spin text-indigo-500 mb-2" />
@@ -215,89 +215,105 @@ export function AppPoolTab() {
             </p>
           </div>
         ) : (
-          apps.map((app) => {
-            const percent = Math.min(100, Math.round((app.current_tester_count / app.target_tester_count) * 100));
-            const hasJoined = Boolean(app.my_participation);
+          <div className="grid grid-cols-2 gap-2.5 sm:gap-3">
+            {apps.map((app) => {
+              const percent = Math.min(100, Math.round((app.current_tester_count / app.target_tester_count) * 100));
+              const hasJoined = Boolean(app.my_participation);
 
-            return (
-              <div
-                key={app.id}
-                onClick={() => setOpenedApp(app)}
-                className={`bg-white rounded-3xl p-4 border transition-all cursor-pointer shadow-xs hover:shadow-md hover:border-indigo-100 active:scale-[0.99] ${
-                  app.is_full ? "opacity-75 border-slate-200 bg-slate-50/50" : "border-slate-100"
-                }`}
-              >
-                {/* Top Row: Icon, Title & Category */}
-                <div className="flex items-start gap-3.5 mb-3">
-                  <div className="w-13 h-13 rounded-2xl overflow-hidden shrink-0 shadow-2xs bg-slate-50 border border-slate-100 flex items-center justify-center">
-                    <Image
-                      src={app.icon_url || "/icons/brandlook.svg"}
-                      alt={app.name}
-                      width={52}
-                      height={52}
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
+              return (
+                <div
+                  key={app.id}
+                  onClick={() => setOpenedApp(app)}
+                  className={`bg-white rounded-2xl p-2.5 sm:p-3 border transition-all cursor-pointer shadow-2xs hover:shadow-md hover:border-indigo-200/80 active:scale-[0.98] flex flex-col justify-between group ${
+                    app.is_full ? "opacity-80 border-slate-200 bg-slate-50/50" : "border-slate-100"
+                  }`}
+                >
+                  <div>
+                    {/* Square Image / Icon Area with Overlaid Badges */}
+                    <div className="relative w-full aspect-square bg-gradient-to-b from-slate-50 via-slate-50 to-indigo-50/30 rounded-xl overflow-hidden flex items-center justify-center p-3 mb-2 border border-slate-100/80">
+                      {/* App Icon */}
+                      <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl overflow-hidden shadow-xs group-hover:scale-105 transition-transform duration-300 bg-white">
+                        <Image
+                          src={app.icon_url || "/icons/brandlook.svg"}
+                          alt={app.name}
+                          width={64}
+                          height={64}
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
 
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center justify-between gap-1 mb-0.5">
-                      <h3 className="font-bold text-sm text-slate-900 truncate">
+                      {/* Top-Left Category Badge */}
+                      <span className="absolute top-1.5 left-1.5 text-[9px] font-semibold px-1.5 py-0.5 rounded-md bg-white/95 backdrop-blur-xs text-slate-600 shadow-2xs border border-slate-100 truncate max-w-[65%]">
+                        {app.category}
+                      </span>
+
+                      {/* Top-Right Status Badge */}
+                      {hasJoined ? (
+                        <span className="absolute top-1.5 right-1.5 text-[9px] font-bold px-1.5 py-0.5 rounded-md bg-indigo-600 text-white shadow-2xs flex items-center gap-0.5">
+                          <Check className="w-2.5 h-2.5 stroke-[3]" />
+                          <span>Katıldın</span>
+                        </span>
+                      ) : app.is_owner ? (
+                        <span className="absolute top-1.5 right-1.5 text-[9px] font-bold px-1.5 py-0.5 rounded-md bg-purple-100 text-purple-700 border border-purple-200 shadow-2xs">
+                          Senin
+                        </span>
+                      ) : app.is_full ? (
+                        <span className="absolute top-1.5 right-1.5 text-[9px] font-bold px-1.5 py-0.5 rounded-md bg-slate-800 text-white shadow-2xs">
+                          Doldu
+                        </span>
+                      ) : null}
+                    </div>
+
+                    {/* App Title & Short Description */}
+                    <div className="mb-2">
+                      <h3 className="font-bold text-xs sm:text-sm text-slate-900 truncate group-hover:text-indigo-600 transition-colors leading-tight">
                         {app.name}
                       </h3>
-                      {app.is_owner && (
-                        <span className="text-[10px] font-semibold text-purple-700 bg-purple-50 border border-purple-200 px-2 py-0.5 rounded-full shrink-0">
-                          Senin Uygulaman
-                        </span>
-                      )}
-                    </div>
-                    <span className="text-[11px] font-medium text-slate-400 block mb-1">
-                      {app.category}
-                    </span>
-                    <p className="text-xs text-slate-600 line-clamp-2 leading-relaxed font-normal">
-                      {app.description || "Kapalı beta test katılımcıları aranıyor."}
-                    </p>
-                  </div>
-                </div>
-
-                {/* Progress Bar & Actions */}
-                <div className="pt-2 border-t border-slate-100/80 flex items-center justify-between gap-3">
-                  <div className="flex-1">
-                    <div className="flex items-center justify-between text-[11px] font-semibold text-slate-500 mb-1">
-                      <span>{app.current_tester_count} / {app.target_tester_count} Testçi</span>
-                      <span>%{percent}</span>
-                    </div>
-                    <div className="w-full h-1.5 bg-slate-100 rounded-full overflow-hidden">
-                      <div
-                        className={`h-full rounded-full transition-all duration-500 ${
-                          app.is_full
-                            ? "bg-slate-400"
-                            : percent > 80
-                            ? "bg-amber-500"
-                            : "bg-gradient-to-r from-indigo-500 to-purple-600"
-                        }`}
-                        style={{ width: `${percent}%` }}
-                      />
+                      <p className="text-[11px] text-slate-500 line-clamp-2 leading-snug mt-1 min-h-[2.1rem]">
+                        {app.description || "Kapalı beta test katılımcıları aranıyor."}
+                      </p>
                     </div>
                   </div>
 
-                  {/* Status / Join Button */}
-                  <div className="shrink-0">
+                  {/* Bottom: Tester Progress & Action Button */}
+                  <div>
+                    {/* Tester Quota Counter & Progress Bar */}
+                    <div className="mb-2">
+                      <div className="flex items-center justify-between text-[10px] font-semibold text-slate-500 mb-1">
+                        <span>{app.current_tester_count}/{app.target_tester_count} Testçi</span>
+                        <span className={percent > 80 ? "text-amber-600 font-bold" : "text-slate-600"}>%{percent}</span>
+                      </div>
+                      <div className="w-full h-1.5 bg-slate-100 rounded-full overflow-hidden">
+                        <div
+                          className={`h-full rounded-full transition-all duration-500 ${
+                            app.is_full
+                              ? "bg-slate-400"
+                              : percent > 80
+                              ? "bg-amber-500"
+                              : "bg-gradient-to-r from-indigo-500 to-purple-600"
+                          }`}
+                          style={{ width: `${percent}%` }}
+                        />
+                      </div>
+                    </div>
+
+                    {/* Action Button (E-commerce Style Full Width) */}
                     {hasJoined ? (
-                      <span className="inline-flex items-center gap-1 text-xs font-semibold px-3 py-1.5 rounded-xl bg-indigo-50 text-indigo-700 border border-indigo-200/60">
+                      <div className="w-full py-1.5 px-2 rounded-xl bg-indigo-50 border border-indigo-200/80 text-indigo-700 text-xs font-semibold flex items-center justify-center gap-1">
                         <Check className="w-3.5 h-3.5 stroke-[2.5]" />
                         <span>Katıldın</span>
-                      </span>
+                      </div>
                     ) : app.is_full ? (
-                      <span className="inline-flex items-center text-xs font-medium px-3 py-1.5 rounded-xl bg-slate-100 text-slate-500">
+                      <div className="w-full py-1.5 px-2 rounded-xl bg-slate-100 text-slate-400 text-xs font-medium text-center">
                         Kontenjan Doldu
-                      </span>
+                      </div>
                     ) : app.is_owner ? (
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
                           setOpenedApp(app);
                         }}
-                        className="text-xs font-semibold px-3.5 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 transition-colors"
+                        className="w-full py-1.5 px-2 rounded-xl bg-purple-50 hover:bg-purple-100 text-purple-700 text-xs font-semibold text-center border border-purple-200/60 transition-colors"
                       >
                         Yönet
                       </button>
@@ -305,10 +321,10 @@ export function AppPoolTab() {
                       <button
                         onClick={(e) => handleJoinTest(app, e)}
                         disabled={joiningId === app.id}
-                        className="text-xs font-bold px-4 py-1.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white shadow-2xs hover:shadow-xs active:scale-95 transition-all flex items-center gap-1.5"
+                        className="w-full py-1.5 px-2 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white text-xs font-bold text-center shadow-xs active:scale-95 transition-all flex items-center justify-center gap-1"
                       >
                         {joiningId === app.id ? (
-                          <RefreshCw className="w-3.5 h-3.5 animate-spin" />
+                          <RefreshCw className="w-3 h-3 animate-spin" />
                         ) : (
                           <span>Teste Katıl</span>
                         )}
@@ -316,9 +332,9 @@ export function AppPoolTab() {
                     )}
                   </div>
                 </div>
-              </div>
-            );
-          })
+              );
+            })}
+          </div>
         )}
       </div>
     </div>
