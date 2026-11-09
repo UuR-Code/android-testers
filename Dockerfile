@@ -12,10 +12,10 @@ RUN npm install
 COPY . .
 
 ENV NEXT_TELEMETRY_DISABLED=1
-ENV NODE_ENV=production
 RUN npx prisma generate
 RUN npm run build
 
+ENV NODE_ENV=production
 RUN chmod +x docker-entrypoint.sh
 RUN mkdir -p /app/data && chmod 777 /app/data
 
