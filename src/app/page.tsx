@@ -21,13 +21,13 @@ export default function HomePage() {
   const { activeTab, isMobileFrame } = useApp();
 
   return (
-    <div className={`min-h-screen w-full flex items-center justify-center ${isMobileFrame ? "p-4 md:p-8 bg-slate-900" : "bg-slate-100"}`}>
+    <div className={`min-h-screen w-full flex items-center justify-center ${isMobileFrame ? "p-4 md:p-8 bg-slate-900" : "bg-slate-100 sm:py-6"}`}>
       {/* Mobile Shell / Device Frame */}
       <div
-        className={`w-full bg-slate-50 min-h-screen flex flex-col relative transition-all duration-300 ${
+        className={`w-full bg-slate-50 min-h-screen sm:min-h-[844px] flex flex-col relative transition-all duration-300 ${
           isMobileFrame
             ? "max-w-sm rounded-[48px] shadow-2xl ring-12 ring-slate-800 overflow-hidden min-h-[840px] max-h-[90vh] my-auto border-4 border-slate-700"
-            : "max-w-md shadow-2xl"
+            : "max-w-md sm:rounded-3xl shadow-xl sm:overflow-hidden"
         }`}
       >
         {/* Device Notch / Speaker for Mobile Simulator */}
