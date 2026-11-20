@@ -23,7 +23,10 @@ interface TestItem {
   icon_url: string;
   opt_in_url: string;
   store_url?: string | null;
+  verification_question?: string | null;
   status: "JOINED" | "INVITED" | "CLAIMED_TESTED" | "APPROVED" | "REJECTED";
+  failed_attempts?: number;
+  is_locked_out?: boolean;
   joined_at: string;
   invited_at?: string | null;
   claimed_tested_at?: string | null;
@@ -138,6 +141,7 @@ export function MyTestsTab() {
       icon_url: test.icon_url,
       opt_in_url: test.opt_in_url,
       store_url: test.store_url,
+      verification_question: test.verification_question || null,
       status: "ACTIVE",
       target_tester_count: 20,
       current_tester_count: 0,
@@ -145,6 +149,12 @@ export function MyTestsTab() {
       is_owner: false,
       description: null,
       created_at: test.joined_at,
+      my_participation: {
+        id: test.id,
+        status: test.status,
+        failed_attempts: test.failed_attempts || 0,
+        is_locked_out: test.is_locked_out || false,
+      },
     });
     setIsFeedbackModalOpen(true);
   };
@@ -318,8 +328,8 @@ export function MyTestsTab() {
                     onClick={(e) => handleOpenFeedback(test, e)}
                     className="py-1.5 px-3 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs rounded-xl shadow-2xs active:scale-95 transition-all flex items-center gap-1"
                   >
-                    <Send className="w-3 h-3" />
-                    <span>Test Ettim</span>
+                    <Coins className="w-3 h-3 text-amber-300" />
+                    <span>Testi Tamamla (+1 Kredi)</span>
                   </button>
                 ) : test.status === "APPROVED" ? (
                   <span className="text-xs font-bold text-emerald-600 flex items-center gap-1">

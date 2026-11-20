@@ -170,37 +170,79 @@ export async function POST(
       }
     }
 
-    // Update participation to CLAIMED_TESTED (answer matched successfully)
+    // System settings for reward amount (default: 1 credit)
+    const settings = await prisma.systemSetting.findUnique({
+      where: { id: "default" },
+    });
+    const reward = settings?.reward_per_approved_test ?? 1;
+
+    // AUTOMATIC INSTANT APPROVAL & REWARD (Owner approval no longer required!)
     const updated = await prisma.$transaction(async (tx) => {
-      const part = await tx.testParticipation.update({
-        where: { id: participation.id },
+      // 1. Give +1 credit to tester
+      const updatedUser = await tx.user.update({
+        where: { id: currentUser.id },
         data: {
-          status: "CLAIMED_TESTED",
-          feedback_type,
-          feedback_text: feedback_text?.trim() || null,
-          tester_answer: tester_answer?.trim() || null,
-          claimed_tested_at: new Date(),
+          credit_balance: { increment: reward },
         },
       });
 
-      // Notify app owner
+      // 2. Mark participation as APPROVED immediately
+      const now = new Date();
+      const part = await tx.testParticipation.update({
+        where: { id: participation.id },
+        data: {
+          status: "APPROVED",
+          feedback_type,
+          feedback_text: feedback_text?.trim() || null,
+          tester_answer: tester_answer?.trim() || null,
+          claimed_tested_at: now,
+          approved_at: now,
+        },
+      });
+
+      // 3. Log credit transaction
+      await tx.creditTransaction.create({
+        data: {
+          user_id: currentUser.id,
+          app_id: participation.app_id,
+          participation_id: part.id,
+          amount: reward,
+          balance_after: updatedUser.credit_balance,
+          transaction_type: "TEST_REWARD",
+          description: `Test Doğrulama Ödülü (${participation.app.name})`,
+        },
+      });
+
+      // 4. Notify tester
+      await tx.notification.create({
+        data: {
+          user_id: currentUser.id,
+          type: "TEST_APPROVED",
+          title: "Kredi Kazandın! 🪙 +1",
+          message: `"${participation.app.name}" testini başarıyla tamamladın ve doğruladın. +${reward} kredi hesabına anında yüklendi!`,
+          link: "/?tab=profile",
+        },
+      });
+
+      // 5. Notify app owner that test was completed & verified
       await tx.notification.create({
         data: {
           user_id: participation.app.owner_id,
           type: "TEST_CLAIMED",
-          title: "Test Geri Bildirimi Geldi 📝",
-          message: `${currentUser.name || currentUser.email} kullanıcısı "${participation.app.name}" testini tamamladığını bildirdi. (Doğrulama Cevabı: ${tester_answer?.trim()})`,
+          title: "Test Başarıyla Tamamlandı ✅",
+          message: `${currentUser.name || currentUser.email} kullanıcısı "${participation.app.name}" uygulamanızı indirdi ve doğrulama sorusunu başarıyla yanıtladı.`,
           link: `/apps/${appId}/manage`,
         },
       });
 
-      return part;
+      return { part, newBalance: updatedUser.credit_balance };
     });
 
     return NextResponse.json({
       success: true,
-      message: "Geri bildiriminiz ve doğrulama yanıtınız başarıyla iletildi! Geliştirici onayı bekleniyor.",
-      participation: updated,
+      message: `Tebrikler! Doğrulama başarılı oldu ve +${reward} kredi hesabınıza anında yüklendi! 🎉`,
+      participation: updated.part,
+      newBalance: updated.newBalance,
     });
   } catch (error) {
     console.error("Submit feedback error:", error);

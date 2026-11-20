@@ -167,6 +167,20 @@ export async function POST(request: Request) {
       );
     }
 
+    if (
+      !verification_question ||
+      !verification_answer ||
+      typeof verification_question !== "string" ||
+      typeof verification_answer !== "string" ||
+      !verification_question.trim() ||
+      !verification_answer.trim()
+    ) {
+      return NextResponse.json(
+        { error: "Testçilerin indirmesini doğrulayacak kontrol sorusu ve doğru cevabı zorunludur." },
+        { status: 400 }
+      );
+    }
+
     // System settings
     const settings = await prisma.systemSetting.findUnique({
       where: { id: "default" },

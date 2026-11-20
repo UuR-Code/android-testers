@@ -71,6 +71,11 @@ export function AddAppModal() {
       return;
     }
 
+    if (!verificationQuestion.trim() || !verificationAnswer.trim()) {
+      showToast("Lütfen indirme doğrulama sorusunu ve doğru cevabını girin.", "error");
+      return;
+    }
+
     setIsSubmitting(true);
     try {
       const res = await fetch("/api/apps", {
@@ -263,53 +268,56 @@ export function AddAppModal() {
           />
         </div>
 
-        {/* 7. İndirme Doğrulama Sorusu (Kontrol Mekanizması) */}
-        <div className="p-3.5 bg-gradient-to-r from-indigo-50/80 via-purple-50/60 to-indigo-50/80 border border-indigo-100 rounded-2xl space-y-3">
+        {/* 7. İndirme Doğrulama Sorusu (Otomatik Onay Mekanizması) */}
+        <div className="p-3.5 bg-gradient-to-r from-indigo-50/90 via-purple-50/70 to-indigo-50/90 border border-indigo-200 rounded-2xl space-y-3">
           <div className="flex items-center gap-2">
             <div className="w-7 h-7 rounded-lg bg-indigo-600 text-white flex items-center justify-center shadow-2xs">
               <ShieldCheck className="w-4 h-4" />
             </div>
             <div>
               <h4 className="text-xs font-bold text-slate-900">
-                İndirme Doğrulama Sorusu (Kontrol)
+                İndirme Doğrulama Sorusu (Otomatik Onay) *
               </h4>
               <p className="text-[10px] text-slate-500">
-                Testçinin uygulamayı gerçekten indirdiğini kanıtlamasını sağlayın.
+                Testçinin uygulamayı gerçekten indirdiğini kanıtlayan soru.
               </p>
             </div>
           </div>
 
+          <div className="p-2.5 bg-white/90 border border-indigo-100 rounded-xl text-[11px] text-indigo-950 leading-relaxed shadow-2xs">
+            ⚡ <strong>Otomatik Onay:</strong> Testçi bu soruyu doğru yanıtladığında sistem testi <strong>anında onaylar</strong> ve +1 kredisini verir. Sizin manuel onay vermenize gerek kalmaz!
+          </div>
+
           <div>
             <label className="block text-[11px] font-semibold text-slate-700 mb-1">
-              Kontrol Sorusu (İsteğe bağlı)
+              Kontrol Sorusu *
             </label>
             <input
               type="text"
+              required
               value={verificationQuestion}
               onChange={(e) => setVerificationQuestion(e.target.value)}
-              placeholder="Örn: Açılış ekranındaki butonun yazısı veya Ayarlar'daki sürüm kodu?"
+              placeholder="Örn: Açılış ekranındaki butonun yazısı veya ilk sayfadaki başlık?"
               className="w-full p-2.5 bg-white border border-slate-200 rounded-xl text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 shadow-2xs"
             />
           </div>
 
-          {verificationQuestion.trim() && (
-            <div>
-              <label className="block text-[11px] font-semibold text-slate-700 mb-1">
-                Doğru Cevap *
-              </label>
-              <input
-                type="text"
-                required={Boolean(verificationQuestion.trim())}
-                value={verificationAnswer}
-                onChange={(e) => setVerificationAnswer(e.target.value)}
-                placeholder="Örn: Hemen Başla, v1.0, Sepetim"
-                className="w-full p-2.5 bg-white border border-slate-200 rounded-xl text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 shadow-2xs"
-              />
-              <span className="text-[10px] text-slate-400 mt-1 block">
-                Testçi bu yanıtı girmeden testi tamamlayamaz. Büyük/küçük harf duyarsız kontrol edilir.
-              </span>
-            </div>
-          )}
+          <div>
+            <label className="block text-[11px] font-semibold text-slate-700 mb-1">
+              Doğru Cevap *
+            </label>
+            <input
+              type="text"
+              required
+              value={verificationAnswer}
+              onChange={(e) => setVerificationAnswer(e.target.value)}
+              placeholder="Örn: Hemen Başla"
+              className="w-full p-2.5 bg-white border border-slate-200 rounded-xl text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 shadow-2xs"
+            />
+            <span className="text-[10px] text-slate-400 mt-1 block">
+              %70 harf benzerliği ve Türkçe karakter toleransı vardır. 2 yanlış denemede testçi projeden engellenir.
+            </span>
+          </div>
         </div>
 
         {/* 8. App Icon Selector */}

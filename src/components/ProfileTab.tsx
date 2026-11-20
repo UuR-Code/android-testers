@@ -343,7 +343,7 @@ export function ProfileTab() {
             <div className="space-y-3 text-xs text-slate-600">
               <div className="p-3 bg-slate-50 rounded-2xl">
                 <strong className="text-slate-900 block mb-1">Kredi nasıl kazanırım?</strong>
-                Havuzdaki uygulamalara katılıp Google Play üzerinden test edin ve "Test Ettim" bildirimi gönderin. Geliştirici onayladığında <strong>+1 kredi</strong> kazanırsınız.
+                Havuzdaki uygulamalara katılıp Google Play üzerinden indirin ve kontrol sorusunu yanıtlayın. Doğrulama başarılı olunca anında <strong>+1 kredi</strong> hesabınıza aktarılır.
               </div>
               <div className="p-3 bg-slate-50 rounded-2xl">
                 <strong className="text-slate-900 block mb-1">Kendi uygulamamı nasıl eklerim?</strong>

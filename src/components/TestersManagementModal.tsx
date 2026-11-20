@@ -162,7 +162,7 @@ export function TestersManagementModal() {
   const getStatusBadge = (status: TesterRecord["status"]) => {
     switch (status) {
       case "APPROVED":
-        return <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">Onaylandı</span>;
+        return <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">✅ Doğrulandı (+1 Kredi)</span>;
       case "CLAIMED_TESTED":
         return <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-50 text-amber-700 border border-amber-200">Onay Bekliyor</span>;
       case "INVITED":
@@ -220,8 +220,13 @@ export function TestersManagementModal() {
         </div>
 
         {/* Notice for Developer */}
-        <div className="p-3 bg-slate-50 border border-slate-100 rounded-2xl text-[11px] text-slate-600 leading-relaxed">
-          💡 Bu Gmail adreslerini <strong>Google Play Console &gt; Kapalı Test &gt; Test Edenler</strong> alanına ekleyin. Ekledikten sonra testçilerin durumunu "Davet Hazır" yapabilir ve teste davet edebilirsiniz.
+        <div className="p-3 bg-slate-50 border border-slate-100 rounded-2xl text-[11px] text-slate-600 leading-relaxed space-y-1">
+          <p>
+            💡 <strong>Otomatik Onay Sistemi:</strong> Testçiler uygulamanızı indirip kontrol sorusunu doğru yanıtladığında sistem testi <strong>otomatik onaylar</strong> ve +1 kredilerini anında verir. Manuel onay vermenize gerek yoktur.
+          </p>
+          <p className="text-slate-500">
+            Aşağıdaki Gmail adreslerini <strong>Google Play Console &gt; Kapalı Test &gt; Test Edenler</strong> listesine ekleyin.
+          </p>
         </div>
 
         {/* Verification Question Info for Owner */}
@@ -229,12 +234,12 @@ export function TestersManagementModal() {
           <div className="p-3 bg-indigo-50/70 border border-indigo-200/80 rounded-2xl text-[11px] space-y-1">
             <div className="flex items-center gap-1.5 font-bold text-indigo-950">
               <ShieldCheck className="w-4 h-4 text-indigo-600" />
-              <span>İndirme Doğrulama Sorusu:</span>
+              <span>İndirme Doğrulama Sorusu (Otomatik Kontrol):</span>
             </div>
             <p className="text-slate-700 font-medium">"{verificationQuestion}"</p>
             {verificationAnswer && (
               <p className="text-indigo-700 font-bold">
-                Doğru Cevap: <span className="underline">{verificationAnswer}</span>
+                Doğru Cevap: <span className="underline">{verificationAnswer}</span> (%70 benzerlikte otomatik onaylanır)
               </p>
             )}
           </div>

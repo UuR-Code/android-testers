@@ -46,11 +46,11 @@ export function TestFeedbackModal() {
       const data = await res.json();
       if (res.ok && data.success) {
         triggerConfetti();
-        showToast("Geri bildirim iletildi! Geliştirici onayı bekleniyor.", "success");
+        showToast(data.message || "Tebrikler! Doğrulama başarılı oldu ve +1 kredi hesabınıza anında yüklendi! 🎉", "success");
         await refreshUser();
         setIsFeedbackModalOpen(false);
         setOpenedApp(null);
-        setActiveTab("tests");
+        setActiveTab("profile");
       } else {
         showToast(data.error || "Geri bildirim gönderilemedi", "error");
         if (data.is_locked_out) {
@@ -77,7 +77,7 @@ export function TestFeedbackModal() {
           >
             <ArrowLeft className="w-5 h-5" />
           </button>
-          <h3 className="font-bold text-sm text-slate-800">Test Geri Bildirimi</h3>
+          <h3 className="font-bold text-sm text-slate-800">Testi Tamamla & Kredi Kazan</h3>
           <div className="w-5" />
         </div>
 
@@ -246,7 +246,7 @@ export function TestFeedbackModal() {
               <span>Gönderiliyor...</span>
             </>
           ) : (
-            <span>Test Ettim, Onaya Gönder</span>
+            <span>Testi Tamamla (+1 Kredi Kazan)</span>
           )}
         </button>
       </div>

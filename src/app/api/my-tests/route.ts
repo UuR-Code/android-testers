@@ -26,6 +26,7 @@ export async function GET(request: Request) {
             opt_in_url: true,
             store_url: true,
             status: true,
+            verification_question: true,
           },
         },
       },
@@ -66,7 +67,10 @@ export async function GET(request: Request) {
         icon_url: p.app.icon_url || "/icons/brandlook.svg",
         opt_in_url: p.app.opt_in_url,
         store_url: p.app.store_url,
+        verification_question: p.app.verification_question,
         status: p.status, // JOINED, INVITED, CLAIMED_TESTED, APPROVED, REJECTED
+        failed_attempts: p.failed_attempts,
+        is_locked_out: p.is_locked_out,
         joined_at: p.joined_at,
         invited_at: p.invited_at,
         claimed_tested_at: p.claimed_tested_at,

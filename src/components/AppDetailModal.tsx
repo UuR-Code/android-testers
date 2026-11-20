@@ -291,9 +291,9 @@ export function AppDetailModal() {
                   4
                 </div>
                 <div>
-                  <h5 className="text-xs font-bold text-slate-900">Testi Tamamla & Onay Al</h5>
+                  <h5 className="text-xs font-bold text-slate-900">Testi Tamamla & Anında Kredi Kazan</h5>
                   <p className="text-[11px] text-slate-500">
-                    Kısa geri bildirim gönder. Geliştirici onaylayınca <strong>+1 kredi</strong> kazanırsın.
+                    Uygulamayı açıp kontrol sorusunu yanıtla, testin anında onaylansın ve <strong>+1 kredi</strong> hesabına hemen yüklensin!
                   </p>
                 </div>
               </div>
@@ -305,7 +305,7 @@ export function AppDetailModal() {
                 <ShieldCheck className="w-4 h-4 text-indigo-600 shrink-0 mt-0.5" />
                 <div className="text-[11px] text-indigo-950 leading-relaxed">
                   <span className="font-bold block">İndirme Doğrulama Kontrolü:</span>
-                  <span>Geliştirici indirme doğrulaması talep etmektedir. Testi tamamlarken uygulama içindeki kontrol sorusunu yanıtlamanız gerekecektir.</span>
+                  <span>Uygulamayı açıp kontrol sorusunu yanıtladığınızda testiniz <strong>anında otomatik onaylanır</strong> ve +1 kredi hesabınıza tanımlanır.</span>
                 </div>
               </div>
             )}
@@ -435,7 +435,7 @@ export function AppDetailModal() {
                   }}
                   className="flex-1 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs rounded-2xl text-center shadow-md shadow-indigo-500/20 active:scale-98 transition-all"
                 >
-                  Test Ettim, Bildir
+                  Testi Tamamla (+1 Kredi)
                 </button>
               </div>
             )}
