@@ -14,6 +14,9 @@ export interface SessionUser {
   name: string | null;
   role: string;
   credit_balance: number;
+  warning_count: number;
+  is_suspended: boolean;
+  suspension_reason: string | null;
 }
 
 /**
@@ -89,6 +92,9 @@ export async function getCurrentUser(): Promise<SessionUser | null> {
         name: true,
         role: true,
         credit_balance: true,
+        warning_count: true,
+        is_suspended: true,
+        suspension_reason: true,
       },
     });
 

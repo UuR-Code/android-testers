@@ -43,6 +43,8 @@ export async function GET(request: Request) {
                 select: {
                   id: true,
                   status: true,
+                  is_locked_out: true,
+                  failed_attempts: true,
                   claimed_tested_at: true,
                   approved_at: true,
                 },
@@ -112,6 +114,8 @@ export async function GET(request: Request) {
           ? {
               id: participation.id,
               status: participation.status,
+              is_locked_out: participation.is_locked_out,
+              failed_attempts: participation.failed_attempts,
               claimed_tested_at: participation.claimed_tested_at,
               approved_at: participation.approved_at,
             }

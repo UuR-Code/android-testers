@@ -18,6 +18,19 @@ export async function POST(
       );
     }
 
+    // Fetch current user details for suspension check
+    const userInDb = await prisma.user.findUnique({
+      where: { id: currentUser.id },
+      select: { is_suspended: true, warning_count: true },
+    });
+
+    if (userInDb?.is_suspended) {
+      return NextResponse.json(
+        { error: "Hesabınız 3 uyarı sınırına ulaştığı için sistemden uzaklaştırılmıştır." },
+        { status: 403 }
+      );
+    }
+
     // Fetch the app with owner
     const app = await prisma.app.findUnique({
       where: { id: appId },
@@ -64,6 +77,12 @@ export async function POST(
     });
 
     if (existing) {
+      if (existing.is_locked_out) {
+        return NextResponse.json(
+          { error: "Bu projeden 2 hatalı doğrulama cevabı verdiğiniz için men edildiniz. Tekrar başvuramazsınız." },
+          { status: 400 }
+        );
+      }
       return NextResponse.json(
         { error: "Bu uygulamaya zaten katıldınız.", participation: existing },
         { status: 400 }

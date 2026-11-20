@@ -17,6 +17,7 @@ import {
   Check,
   RefreshCw,
   ShieldCheck,
+  AlertCircle,
 } from "lucide-react";
 
 export function AppDetailModal() {
@@ -400,7 +401,12 @@ export function AppDetailModal() {
         ) : (
           <div className="space-y-2">
             {/* Status indicator badge */}
-            {participationStatus === "APPROVED" ? (
+            {openedApp.my_participation?.is_locked_out ? (
+              <div className="w-full py-3 px-4 bg-rose-50 border border-rose-200 text-rose-800 rounded-2xl font-bold text-xs text-center flex items-center justify-center gap-2">
+                <AlertCircle className="w-4 h-4 text-rose-600 shrink-0" />
+                <span>Bu projeden 2 hatalı cevap nedeniyle men edildiniz.</span>
+              </div>
+            ) : participationStatus === "APPROVED" ? (
               <div className="w-full py-3 px-4 bg-emerald-50 border border-emerald-200 text-emerald-800 rounded-2xl font-bold text-xs text-center flex items-center justify-center gap-2">
                 <CheckCircle2 className="w-4 h-4 text-emerald-600" />
                 <span>Testin Onaylandı! (+1 Kredi Hesabında)</span>

@@ -248,7 +248,11 @@ export function AppPoolTab() {
                       </span>
 
                       {/* Top-Right Status Badge */}
-                      {hasJoined ? (
+                      {app.my_participation?.is_locked_out ? (
+                        <span className="absolute top-1.5 right-1.5 text-[9px] font-bold px-1.5 py-0.5 rounded-md bg-rose-600 text-white shadow-2xs">
+                          Men Edildin
+                        </span>
+                      ) : hasJoined ? (
                         <span className="absolute top-1.5 right-1.5 text-[9px] font-bold px-1.5 py-0.5 rounded-md bg-indigo-600 text-white shadow-2xs flex items-center gap-0.5">
                           <Check className="w-2.5 h-2.5 stroke-[3]" />
                           <span>Katıldın</span>
@@ -298,7 +302,11 @@ export function AppPoolTab() {
                     </div>
 
                     {/* Action Button (E-commerce Style Full Width) */}
-                    {hasJoined ? (
+                    {app.my_participation?.is_locked_out ? (
+                      <div className="w-full py-1.5 px-2 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 text-xs font-semibold text-center">
+                        Katılım Kapatıldı 🚫
+                      </div>
+                    ) : hasJoined ? (
                       <div className="w-full py-1.5 px-2 rounded-xl bg-indigo-50 border border-indigo-200/80 text-indigo-700 text-xs font-semibold flex items-center justify-center gap-1">
                         <Check className="w-3.5 h-3.5 stroke-[2.5]" />
                         <span>Katıldın</span>

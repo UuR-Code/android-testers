@@ -53,6 +53,11 @@ export function TestFeedbackModal() {
         setActiveTab("tests");
       } else {
         showToast(data.error || "Geri bildirim gönderilemedi", "error");
+        if (data.is_locked_out) {
+          await refreshUser();
+          setIsFeedbackModalOpen(false);
+          setOpenedApp(null);
+        }
       }
     } catch (e) {
       showToast("Bağlantı hatası", "error");
@@ -174,14 +179,31 @@ export function TestFeedbackModal() {
 
         {/* Verification Question & Answer (Control Mechanism) */}
         {selectedParticipationApp.verification_question && (
-          <div className="mb-4 p-3.5 bg-gradient-to-r from-indigo-50/90 to-purple-50/80 border border-indigo-200/90 rounded-2xl">
-            <div className="flex items-center gap-1.5 mb-1 text-indigo-950 font-bold text-xs">
-              <ShieldCheck className="w-4 h-4 text-indigo-600" />
-              <span>İndirme Doğrulama Sorusu *</span>
+          <div className="mb-4 p-3.5 bg-gradient-to-r from-indigo-50/90 to-purple-50/80 border border-indigo-200/90 rounded-2xl space-y-2">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-1.5 text-indigo-950 font-bold text-xs">
+                <ShieldCheck className="w-4 h-4 text-indigo-600" />
+                <span>İndirme Doğrulama Sorusu *</span>
+              </div>
+              <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-indigo-100 text-indigo-700">
+                2 Hak Sınırı
+              </span>
             </div>
-            <p className="text-xs text-slate-700 font-semibold mb-2">
+
+            {selectedParticipationApp.my_participation?.failed_attempts === 1 && (
+              <div className="p-2 bg-rose-50 border border-rose-200 rounded-xl text-[11px] text-rose-700 flex items-start gap-1.5">
+                <AlertCircle className="w-3.5 h-3.5 shrink-0 mt-0.5 text-rose-600" />
+                <div>
+                  <strong className="block font-bold">1. denemeniz hatalı oldu!</strong>
+                  <span>Son 1 hakkınız kaldı. Bu deneme de yanlış olursa bu projeden men edilirsiniz ve 1 uyarı alırsınız.</span>
+                </div>
+              </div>
+            )}
+
+            <p className="text-xs text-slate-700 font-semibold">
               {selectedParticipationApp.verification_question}
             </p>
+
             <input
               type="text"
               required
@@ -190,9 +212,11 @@ export function TestFeedbackModal() {
               placeholder="Uygulama içindeki cevabı buraya yazın..."
               className="w-full p-2.5 bg-white border border-indigo-200 rounded-xl text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 shadow-2xs"
             />
-            <span className="text-[10px] text-slate-500 mt-1 block">
-              💡 Uygulamayı gerçekten telefonunuza indirip açtığınızı kanıtlamak için bu soru sorulmaktadır.
-            </span>
+
+            <div className="text-[10px] text-slate-500 space-y-0.5">
+              <p>💡 <strong>Esnek Eşleşme:</strong> Kelimeler birebir aynı olmak zorunda değildir (%70 benzerlik kabul edilir, örn: <em>hemen başla / hemn basla</em>).</p>
+              <p className="text-rose-600 font-medium">⚠️ 2 hatalı cevapta proje kapanır ve üye 1 uyarı alır (3 uyarıda sistemden uzaklaştırılır).</p>
+            </div>
           </div>
         )}
 

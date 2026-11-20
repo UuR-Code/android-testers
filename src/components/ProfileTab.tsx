@@ -15,6 +15,8 @@ import {
   Check,
   RefreshCw,
   Download,
+  AlertCircle,
+  AlertTriangle,
 } from "lucide-react";
 
 export function ProfileTab() {
@@ -121,6 +123,29 @@ export function ProfileTab() {
           <span className="text-xs text-slate-500 block">{user.email}</span>
         </div>
       </div>
+
+      {/* Suspension / Warning Notice */}
+      {user.is_suspended ? (
+        <div className="mx-4 mt-4 p-3.5 bg-rose-50 border border-rose-300 rounded-2xl flex items-start gap-2.5 text-rose-900 shadow-2xs">
+          <AlertCircle className="w-5 h-5 text-rose-600 shrink-0 mt-0.5" />
+          <div>
+            <h4 className="text-xs font-bold">Hesabınız Sistemden Uzaklaştırıldı 🚫</h4>
+            <p className="text-[11px] text-rose-700 mt-0.5 leading-relaxed">
+              3 kez hatalı test bildirimi ve doğrulama uyarısı aldığınız için hesabınız askıya alınmıştır. Testlere katılamaz ve uygulama ekleyemezsiniz.
+            </p>
+          </div>
+        </div>
+      ) : user.warning_count && user.warning_count > 0 ? (
+        <div className="mx-4 mt-4 p-3 bg-amber-50 border border-amber-200 rounded-2xl flex items-center justify-between text-amber-900 shadow-2xs">
+          <div className="flex items-center gap-2">
+            <AlertTriangle className="w-4 h-4 text-amber-600" />
+            <span className="text-xs font-semibold">Doğrulama Uyarı Durumu:</span>
+          </div>
+          <span className="text-xs font-bold px-2.5 py-0.5 rounded-full bg-amber-200/90 text-amber-900">
+            {user.warning_count} / 3 Uyarı
+          </span>
+        </div>
+      ) : null}
 
       <div className="p-4 space-y-4">
         {/* Purple Gradient Credit Card (Matches Screen 11) */}

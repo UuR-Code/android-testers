@@ -9,6 +9,9 @@ export interface User {
   role: string;
   credit_balance: number;
   email_notifications?: boolean;
+  warning_count?: number;
+  is_suspended?: boolean;
+  suspension_reason?: string | null;
   unreadNotifications?: number;
   ownedAppsCount?: number;
   participatedTestsCount?: number;
@@ -33,6 +36,8 @@ export interface AppItem {
   my_participation?: {
     id: string;
     status: string;
+    is_locked_out?: boolean;
+    failed_attempts?: number;
     claimed_tested_at?: string | null;
     approved_at?: string | null;
   } | null;
