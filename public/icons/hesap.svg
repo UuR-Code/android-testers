@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80" width="80" height="80">
+  <rect width="80" height="80" rx="20" fill="url(#grad_hesap)" />
+  <defs>
+    <linearGradient id="grad_hesap" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#10B981" />
+      <stop offset="100%" stop-color="#047857" />
+    </linearGradient>
+  </defs>
+  <path d="M25 22H55C57.2 22 59 23.8 59 26V54C59 56.2 57.2 58 55 58H25C22.8 58 21 56.2 21 54V26C21 23.8 22.8 22 25 22ZM27 28V34H53V28H27ZM27 40H33V46H27V40ZM37 40H43V46H37V40ZM47 40H53V52H47V40ZM27 48H33V52H27V48ZM37 48H43V52H37V48Z" fill="white" />
+</svg>

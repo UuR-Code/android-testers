@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80" width="80" height="80">
+  <rect width="80" height="80" rx="20" fill="url(#grad_kelime)" />
+  <defs>
+    <linearGradient id="grad_kelime" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#3B82F6" />
+      <stop offset="100%" stop-color="#1D4ED8" />
+    </linearGradient>
+  </defs>
+  <path d="M24 24H56C58.2 24 60 25.8 60 28V52C60 54.2 58.2 56 56 56H32L20 62V28C20 25.8 21.8 24 24 24ZM30 33H50V37H30V33ZM30 43H44V47H30V43Z" fill="white" />
+</svg>

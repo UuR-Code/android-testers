@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80" width="80" height="80">
+  <rect width="80" height="80" rx="20" fill="url(#grad_sesli)" />
+  <defs>
+    <linearGradient id="grad_sesli" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#F43F5E" />
+      <stop offset="100%" stop-color="#BE123C" />
+    </linearGradient>
+  </defs>
+  <path d="M40 22C36.7 22 34 24.7 34 28V40C34 43.3 36.7 46 40 46C43.3 46 46 43.3 46 40V28C46 24.7 43.3 22 40 22ZM52 38C52 44.6 46.6 50 40 50C33.4 50 28 44.6 28 38H24C24 46.1 30 52.7 38 53.8V58H42V53.8C50 52.7 56 46.1 56 38H52Z" fill="white" />
+</svg>

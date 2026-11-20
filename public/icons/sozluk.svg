@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80" width="80" height="80">
+  <rect width="80" height="80" rx="20" fill="url(#grad_dict)" />
+  <defs>
+    <linearGradient id="grad_dict" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#4F46E5" />
+      <stop offset="100%" stop-color="#3730A3" />
+    </linearGradient>
+  </defs>
+  <path d="M26 22H52C54.2 22 56 23.8 56 26V54C56 56.2 54.2 58 52 58H26C23.8 58 22 56.2 22 54V26C22 23.8 23.8 22 26 22ZM28 26V54H50V26H28ZM34 32H44V36H34V32ZM34 40H44V44H34V40ZM34 48H40V50H34V48Z" fill="white" />
+</svg>
