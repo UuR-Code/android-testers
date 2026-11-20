@@ -38,6 +38,8 @@ model App {
   target_tester_count  Int                   @default(20)
   current_tester_count Int                   @default(0)
   note_for_testers     String?
+  verification_question String?             // e.g. "Açılış ekranındaki butonun üzerinde ne yazıyor?"
+  verification_answer   String?             // e.g. "Hemen Başla"
   created_at           DateTime              @default(now())
   updated_at           DateTime              @updatedAt
 
@@ -59,6 +61,7 @@ model TestParticipation {
   rejected_at         DateTime?
   feedback_type       String?               // "NO_PROBLEM", "BUG_FOUND", "SUGGESTION"
   feedback_text       String?
+  tester_answer       String?               // Answer provided by tester to verification question
   rejection_reason    String?
   last_reminder_at    DateTime?
   created_at          DateTime              @default(now())

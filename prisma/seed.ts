@@ -131,6 +131,8 @@ async function main() {
       target_tester_count: 20,
       current_tester_count: 14,
       note_for_testers: "Lütfen profil oluşturup en az 1 yapay zeka görseli üretin ve geri bildirim verin.",
+      verification_question: "Açılış ekranındaki mor butonun üzerinde ne yazıyor?",
+      verification_answer: "Hemen Başla",
       created_at: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000),
     },
   });
@@ -152,6 +154,8 @@ async function main() {
       target_tester_count: 20,
       current_tester_count: 9,
       note_for_testers: "1. bölümü bitirip skor tablosunu test edin.",
+      verification_question: "Oyun ana menüsündeki ilk butonun adı nedir?",
+      verification_answer: "Oyuna Başla",
       created_at: new Date(Date.now() - 6 * 24 * 60 * 60 * 1000),
     },
   });
@@ -173,6 +177,8 @@ async function main() {
       target_tester_count: 20,
       current_tester_count: 6,
       note_for_testers: "Sepete 3 ürün ekleyip market karşılaştırmasını deneyin.",
+      verification_question: "Uygulama açılışında sepet tutarı varsayılan kaç TL?",
+      verification_answer: "0",
       created_at: new Date(Date.now() - 4 * 24 * 60 * 60 * 1000),
     },
   });

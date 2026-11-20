@@ -16,6 +16,7 @@ import {
   Info,
   Check,
   RefreshCw,
+  ShieldCheck,
 } from "lucide-react";
 
 export function AppDetailModal() {
@@ -296,6 +297,17 @@ export function AppDetailModal() {
                 </div>
               </div>
             </div>
+
+            {/* Verification Notice */}
+            {openedApp.verification_question && (
+              <div className="p-3 bg-indigo-50/80 border border-indigo-200/80 rounded-2xl flex items-start gap-2.5">
+                <ShieldCheck className="w-4 h-4 text-indigo-600 shrink-0 mt-0.5" />
+                <div className="text-[11px] text-indigo-950 leading-relaxed">
+                  <span className="font-bold block">İndirme Doğrulama Kontrolü:</span>
+                  <span>Geliştirici indirme doğrulaması talep etmektedir. Testi tamamlarken uygulama içindeki kontrol sorusunu yanıtlamanız gerekecektir.</span>
+                </div>
+              </div>
+            )}
 
             {/* Note from developer if any */}
             {openedApp.note_for_testers && (

@@ -105,6 +105,8 @@ export async function GET(request: Request) {
         current_tester_count: app.current_tester_count,
         is_full: isFull,
         is_owner: isOwner,
+        note_for_testers: app.note_for_testers,
+        verification_question: app.verification_question,
         created_at: app.created_at,
         my_participation: participation
           ? {
@@ -135,7 +137,17 @@ export async function POST(request: Request) {
     }
 
     const body = await request.json();
-    const { name, category, description, icon_url, opt_in_url, store_url, note_for_testers } = body;
+    const {
+      name,
+      category,
+      description,
+      icon_url,
+      opt_in_url,
+      store_url,
+      note_for_testers,
+      verification_question,
+      verification_answer,
+    } = body;
 
     if (!name || typeof name !== "string" || name.trim().length === 0) {
       return NextResponse.json(
@@ -211,6 +223,8 @@ export async function POST(request: Request) {
           opt_in_url: opt_in_url.trim(),
           store_url: store_url?.trim() || null,
           note_for_testers: note_for_testers?.trim() || null,
+          verification_question: verification_question?.trim() || null,
+          verification_answer: verification_answer?.trim() || null,
           target_tester_count: defaultTarget,
           current_tester_count: 0,
           status: "ACTIVE",

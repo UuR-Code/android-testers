@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import Image from "next/image";
 import { useApp } from "@/context/AppContext";
-import { ArrowLeft, Check, AlertCircle, Lightbulb, RefreshCw, X } from "lucide-react";
+import { ArrowLeft, Check, AlertCircle, Lightbulb, RefreshCw, X, ShieldCheck } from "lucide-react";
 
 export function TestFeedbackModal() {
   const {
@@ -20,11 +20,17 @@ export function TestFeedbackModal() {
 
   const [feedbackType, setFeedbackType] = useState<"NO_PROBLEM" | "BUG_FOUND" | "SUGGESTION">("NO_PROBLEM");
   const [feedbackText, setFeedbackText] = useState("");
+  const [verificationAnswer, setVerificationAnswer] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   if (!isFeedbackModalOpen || !selectedParticipationApp) return null;
 
   const handleSubmit = async () => {
+    if (selectedParticipationApp.verification_question && !verificationAnswer.trim()) {
+      showToast("Lütfen geliştiricinin kontrol sorusunu yanıtlayın.", "error");
+      return;
+    }
+
     setIsSubmitting(true);
     try {
       const res = await fetch(`/api/apps/${selectedParticipationApp.id}/feedback`, {
@@ -33,6 +39,7 @@ export function TestFeedbackModal() {
         body: JSON.stringify({
           feedback_type: feedbackType,
           feedback_text: feedbackText,
+          tester_answer: verificationAnswer.trim() || undefined,
         }),
       });
 
@@ -164,6 +171,30 @@ export function TestFeedbackModal() {
             </label>
           </div>
         </div>
+
+        {/* Verification Question & Answer (Control Mechanism) */}
+        {selectedParticipationApp.verification_question && (
+          <div className="mb-4 p-3.5 bg-gradient-to-r from-indigo-50/90 to-purple-50/80 border border-indigo-200/90 rounded-2xl">
+            <div className="flex items-center gap-1.5 mb-1 text-indigo-950 font-bold text-xs">
+              <ShieldCheck className="w-4 h-4 text-indigo-600" />
+              <span>İndirme Doğrulama Sorusu *</span>
+            </div>
+            <p className="text-xs text-slate-700 font-semibold mb-2">
+              {selectedParticipationApp.verification_question}
+            </p>
+            <input
+              type="text"
+              required
+              value={verificationAnswer}
+              onChange={(e) => setVerificationAnswer(e.target.value)}
+              placeholder="Uygulama içindeki cevabı buraya yazın..."
+              className="w-full p-2.5 bg-white border border-indigo-200 rounded-xl text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 shadow-2xs"
+            />
+            <span className="text-[10px] text-slate-500 mt-1 block">
+              💡 Uygulamayı gerçekten telefonunuza indirip açtığınızı kanıtlamak için bu soru sorulmaktadır.
+            </span>
+          </div>
+        )}
 
         {/* Optional Comment */}
         <div className="mb-5">

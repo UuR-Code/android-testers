@@ -22,7 +22,15 @@ export async function GET(
     // Verify ownership
     const app = await prisma.app.findUnique({
       where: { id: appId },
-      select: { id: true, owner_id: true, name: true, target_tester_count: true, current_tester_count: true },
+      select: {
+        id: true,
+        owner_id: true,
+        name: true,
+        target_tester_count: true,
+        current_tester_count: true,
+        verification_question: true,
+        verification_answer: true,
+      },
     });
 
     if (!app) {
@@ -63,6 +71,7 @@ export async function GET(
       approved_at: t.approved_at,
       feedback_type: t.feedback_type,
       feedback_text: t.feedback_text,
+      tester_answer: t.tester_answer,
       rejection_reason: t.rejection_reason,
       last_reminder_at: t.last_reminder_at,
     }));
@@ -73,6 +82,8 @@ export async function GET(
         name: app.name,
         target_tester_count: app.target_tester_count,
         current_tester_count: app.current_tester_count,
+        verification_question: app.verification_question,
+        verification_answer: app.verification_answer,
       },
       testers: formatted,
     });

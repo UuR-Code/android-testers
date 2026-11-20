@@ -12,6 +12,7 @@ import {
   Plus,
   RefreshCw,
   Check,
+  ShieldCheck,
 } from "lucide-react";
 
 const PRESET_ICONS = [
@@ -40,6 +41,8 @@ export function AddAppModal() {
   const [optInUrl, setOptInUrl] = useState("");
   const [storeUrl, setStoreUrl] = useState("");
   const [noteForTesters, setNoteForTesters] = useState("");
+  const [verificationQuestion, setVerificationQuestion] = useState("");
+  const [verificationAnswer, setVerificationAnswer] = useState("");
   const [iconUrl, setIconUrl] = useState("/icons/brandlook.svg");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -80,6 +83,8 @@ export function AddAppModal() {
           opt_in_url: optInUrl.trim(),
           store_url: storeUrl.trim() || null,
           note_for_testers: noteForTesters.trim() || null,
+          verification_question: verificationQuestion.trim() || null,
+          verification_answer: verificationAnswer.trim() || null,
           icon_url: iconUrl,
         }),
       });
@@ -258,7 +263,56 @@ export function AddAppModal() {
           />
         </div>
 
-        {/* 7. App Icon Selector */}
+        {/* 7. İndirme Doğrulama Sorusu (Kontrol Mekanizması) */}
+        <div className="p-3.5 bg-gradient-to-r from-indigo-50/80 via-purple-50/60 to-indigo-50/80 border border-indigo-100 rounded-2xl space-y-3">
+          <div className="flex items-center gap-2">
+            <div className="w-7 h-7 rounded-lg bg-indigo-600 text-white flex items-center justify-center shadow-2xs">
+              <ShieldCheck className="w-4 h-4" />
+            </div>
+            <div>
+              <h4 className="text-xs font-bold text-slate-900">
+                İndirme Doğrulama Sorusu (Kontrol)
+              </h4>
+              <p className="text-[10px] text-slate-500">
+                Testçinin uygulamayı gerçekten indirdiğini kanıtlamasını sağlayın.
+              </p>
+            </div>
+          </div>
+
+          <div>
+            <label className="block text-[11px] font-semibold text-slate-700 mb-1">
+              Kontrol Sorusu (İsteğe bağlı)
+            </label>
+            <input
+              type="text"
+              value={verificationQuestion}
+              onChange={(e) => setVerificationQuestion(e.target.value)}
+              placeholder="Örn: Açılış ekranındaki butonun yazısı veya Ayarlar'daki sürüm kodu?"
+              className="w-full p-2.5 bg-white border border-slate-200 rounded-xl text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 shadow-2xs"
+            />
+          </div>
+
+          {verificationQuestion.trim() && (
+            <div>
+              <label className="block text-[11px] font-semibold text-slate-700 mb-1">
+                Doğru Cevap *
+              </label>
+              <input
+                type="text"
+                required={Boolean(verificationQuestion.trim())}
+                value={verificationAnswer}
+                onChange={(e) => setVerificationAnswer(e.target.value)}
+                placeholder="Örn: Hemen Başla, v1.0, Sepetim"
+                className="w-full p-2.5 bg-white border border-slate-200 rounded-xl text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 shadow-2xs"
+              />
+              <span className="text-[10px] text-slate-400 mt-1 block">
+                Testçi bu yanıtı girmeden testi tamamlayamaz. Büyük/küçük harf duyarsız kontrol edilir.
+              </span>
+            </div>
+          )}
+        </div>
+
+        {/* 8. App Icon Selector */}
         <div>
           <label className="block text-xs font-bold text-slate-800 mb-2">
             Uygulama Simgesi

@@ -28,6 +28,7 @@ export interface AppItem {
   is_full: boolean;
   is_owner: boolean;
   note_for_testers?: string | null;
+  verification_question?: string | null;
   created_at: string;
   my_participation?: {
     id: string;

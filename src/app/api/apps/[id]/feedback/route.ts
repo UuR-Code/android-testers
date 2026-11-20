@@ -15,7 +15,7 @@ export async function POST(
     }
 
     const body = await request.json();
-    const { feedback_type, feedback_text } = body;
+    const { feedback_type, feedback_text, tester_answer } = body;
 
     const validTypes = ["NO_PROBLEM", "BUG_FOUND", "SUGGESTION"];
     if (!feedback_type || !validTypes.includes(feedback_type)) {
@@ -51,6 +51,26 @@ export async function POST(
       );
     }
 
+    // Verification Question & Answer Check
+    if (participation.app.verification_question && participation.app.verification_answer) {
+      if (!tester_answer || typeof tester_answer !== "string" || !tester_answer.trim()) {
+        return NextResponse.json(
+          { error: "Lütfen geliştiricinin belirlediği doğrulama sorusunu yanıtlayın." },
+          { status: 400 }
+        );
+      }
+
+      const expected = participation.app.verification_answer.trim().toLowerCase();
+      const provided = tester_answer.trim().toLowerCase();
+
+      if (expected !== provided) {
+        return NextResponse.json(
+          { error: "Doğrulama sorusuna verdiğiniz yanıt hatalı. Lütfen uygulamayı telefonunuza indirip açarak cevabı kontrol edin." },
+          { status: 400 }
+        );
+      }
+    }
+
     // Update participation to CLAIMED_TESTED
     const updated = await prisma.$transaction(async (tx) => {
       const part = await tx.testParticipation.update({
@@ -59,6 +79,7 @@ export async function POST(
           status: "CLAIMED_TESTED",
           feedback_type,
           feedback_text: feedback_text?.trim() || null,
+          tester_answer: tester_answer?.trim() || null,
           claimed_tested_at: new Date(),
         },
       });

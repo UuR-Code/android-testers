@@ -14,6 +14,7 @@ import {
   Send,
   MessageSquare,
   AlertTriangle,
+  ShieldCheck,
 } from "lucide-react";
 
 interface TesterRecord {
@@ -28,6 +29,7 @@ interface TesterRecord {
   approved_at?: string | null;
   feedback_type?: string | null;
   feedback_text?: string | null;
+  tester_answer?: string | null;
   rejection_reason?: string | null;
 }
 
@@ -43,6 +45,8 @@ export function TestersManagementModal() {
 
   const [testers, setTesters] = useState<TesterRecord[]>([]);
   const [appName, setAppName] = useState("");
+  const [verificationQuestion, setVerificationQuestion] = useState<string | null>(null);
+  const [verificationAnswer, setVerificationAnswer] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [processingId, setProcessingId] = useState<string | null>(null);
   const [rejectingRecord, setRejectingRecord] = useState<TesterRecord | null>(null);
@@ -57,6 +61,8 @@ export function TestersManagementModal() {
       if (res.ok) {
         setTesters(data.testers || []);
         setAppName(data.app?.name || "");
+        setVerificationQuestion(data.app?.verification_question || null);
+        setVerificationAnswer(data.app?.verification_answer || null);
       } else {
         showToast(data.error || "Testçiler getirilemedi.", "error");
       }
@@ -218,6 +224,22 @@ export function TestersManagementModal() {
           💡 Bu Gmail adreslerini <strong>Google Play Console &gt; Kapalı Test &gt; Test Edenler</strong> alanına ekleyin. Ekledikten sonra testçilerin durumunu "Davet Hazır" yapabilir ve teste davet edebilirsiniz.
         </div>
 
+        {/* Verification Question Info for Owner */}
+        {verificationQuestion && (
+          <div className="p-3 bg-indigo-50/70 border border-indigo-200/80 rounded-2xl text-[11px] space-y-1">
+            <div className="flex items-center gap-1.5 font-bold text-indigo-950">
+              <ShieldCheck className="w-4 h-4 text-indigo-600" />
+              <span>İndirme Doğrulama Sorusu:</span>
+            </div>
+            <p className="text-slate-700 font-medium">"{verificationQuestion}"</p>
+            {verificationAnswer && (
+              <p className="text-indigo-700 font-bold">
+                Doğru Cevap: <span className="underline">{verificationAnswer}</span>
+              </p>
+            )}
+          </div>
+        )}
+
         {/* Testers List */}
         {isLoading ? (
           <div className="py-12 text-center text-slate-400 text-xs">Yükleniyor...</div>
@@ -258,6 +280,20 @@ export function TestersManagementModal() {
                   {t.feedback_text && (
                     <p className="text-slate-600 italic font-normal">"{t.feedback_text}"</p>
                   )}
+                </div>
+              )}
+
+              {/* Verification Answer from Tester */}
+              {t.tester_answer && (
+                <div className="p-2.5 bg-emerald-50/80 border border-emerald-200/80 rounded-xl text-[11px] flex items-center justify-between gap-2">
+                  <div className="flex items-center gap-1.5 min-w-0">
+                    <ShieldCheck className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+                    <span className="text-slate-600">İndirme Yanıtı:</span>
+                    <strong className="text-slate-900 font-bold truncate">"{t.tester_answer}"</strong>
+                  </div>
+                  <span className="text-[10px] text-emerald-700 bg-emerald-100 font-bold px-1.5 py-0.5 rounded-md shrink-0">
+                    Doğrulandı ✓
+                  </span>
                 </div>
               )}
 
