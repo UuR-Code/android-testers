@@ -24,6 +24,7 @@ interface TestItem {
   opt_in_url: string;
   store_url?: string | null;
   verification_question?: string | null;
+  google_group_url?: string | null;
   status: "JOINED" | "INVITED" | "CLAIMED_TESTED" | "APPROVED" | "REJECTED";
   failed_attempts?: number;
   is_locked_out?: boolean;
@@ -37,6 +38,10 @@ interface TestItem {
   earned_credits: number;
   days_remaining: number;
   days_tested: number;
+  is_target_reached?: boolean;
+  is_14_days_completed?: boolean;
+  target_tester_count?: number;
+  current_tester_count?: number;
 }
 
 export function MyTestsTab() {
@@ -296,13 +301,27 @@ export function MyTestsTab() {
                 {getStatusBadge(test.status)}
               </div>
 
-              {/* 14 Day closed beta tracking banner */}
-              <div className="py-1.5 px-2.5 bg-slate-50 rounded-xl text-[10px] text-slate-500 flex items-center justify-between mb-3 border border-slate-100">
-                <span>14 Günlük Kapalı Beta Süreci:</span>
-                <span className="font-semibold text-slate-700">
-                  {test.days_tested}. gün ({test.days_remaining} gün kaldı)
-                </span>
-              </div>
+              {/* 14 Day closed beta tracking banner (Starts when target 20 testers reached) */}
+              {test.is_14_days_completed ? (
+                <div className="py-2 px-3 bg-emerald-50 rounded-xl text-[11px] text-emerald-800 flex items-center justify-between mb-3 border border-emerald-200">
+                  <span className="font-bold flex items-center gap-1">🎉 14 Günlük Kapalı Test Tamamlandı!</span>
+                  <span className="font-bold text-emerald-700 bg-emerald-100/80 px-2 py-0.5 rounded-md">Yayına Hazır ✅</span>
+                </div>
+              ) : test.is_target_reached ? (
+                <div className="py-2 px-3 bg-indigo-50/80 rounded-xl text-[11px] text-indigo-900 flex items-center justify-between mb-3 border border-indigo-200/80">
+                  <span className="font-medium">14 Günlük Kapalı Beta Geri Sayımı:</span>
+                  <span className="font-bold text-indigo-700">
+                    {test.days_tested}. gün ({test.days_remaining} gün kaldı)
+                  </span>
+                </div>
+              ) : (
+                <div className="py-2 px-3 bg-slate-50 rounded-xl text-[10px] text-slate-600 flex items-center justify-between mb-3 border border-slate-200/80">
+                  <span>Hedef Kontenjan:</span>
+                  <span className="font-bold text-slate-700">
+                    {test.current_tester_count ?? 0}/{test.target_tester_count ?? 20} testçi (20 olunca 14 gün başlar)
+                  </span>
+                </div>
+              )}
 
               {/* Rejection reason if rejected */}
               {test.status === "REJECTED" && test.rejection_reason && (

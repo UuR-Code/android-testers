@@ -109,6 +109,8 @@ export async function GET(request: Request) {
         is_owner: isOwner,
         note_for_testers: app.note_for_testers,
         verification_question: app.verification_question,
+        google_group_url: app.google_group_url,
+        target_reached_at: app.target_reached_at,
         created_at: app.created_at,
         my_participation: participation
           ? {
@@ -151,6 +153,7 @@ export async function POST(request: Request) {
       note_for_testers,
       verification_question,
       verification_answer,
+      google_group_url,
     } = body;
 
     if (!name || typeof name !== "string" || name.trim().length === 0) {
@@ -243,6 +246,7 @@ export async function POST(request: Request) {
           note_for_testers: note_for_testers?.trim() || null,
           verification_question: verification_question?.trim() || null,
           verification_answer: verification_answer?.trim() || null,
+          google_group_url: google_group_url?.trim() || null,
           target_tester_count: defaultTarget,
           current_tester_count: 0,
           status: "ACTIVE",

@@ -43,6 +43,8 @@ model App {
   note_for_testers     String?
   verification_question String?             // e.g. "Açılış ekranındaki butonun üzerinde ne yazıyor?"
   verification_answer   String?             // e.g. "Hemen Başla"
+  google_group_url     String?             // e.g. "https://groups.google.com/g/brandlook-testers"
+  target_reached_at    DateTime?           // Set when current_tester_count >= target_tester_count
   created_at           DateTime              @default(now())
   updated_at           DateTime              @updatedAt
 

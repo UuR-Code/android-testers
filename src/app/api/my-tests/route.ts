@@ -27,6 +27,10 @@ export async function GET(request: Request) {
             store_url: true,
             status: true,
             verification_question: true,
+            google_group_url: true,
+            target_reached_at: true,
+            target_tester_count: true,
+            current_tester_count: true,
           },
         },
       },
@@ -53,11 +57,14 @@ export async function GET(request: Request) {
     });
 
     const formatted = filtered.map((p) => {
-      // Calculate 14-day tracking from joined date
-      const daysSinceJoined = Math.floor(
-        (Date.now() - new Date(p.joined_at).getTime()) / (1000 * 60 * 60 * 24)
-      );
-      const daysRemaining = Math.max(0, 14 - daysSinceJoined);
+      // 14-day tracking starts ONLY once target tester count is reached
+      const isTargetReached = Boolean(p.app.target_reached_at) || p.app.current_tester_count >= p.app.target_tester_count;
+      const targetReachedDate = p.app.target_reached_at ? new Date(p.app.target_reached_at) : null;
+      const daysSinceTarget = targetReachedDate
+        ? Math.floor((Date.now() - targetReachedDate.getTime()) / (1000 * 60 * 60 * 24))
+        : 0;
+      const daysRemaining = isTargetReached ? Math.max(0, 14 - daysSinceTarget) : 14;
+      const is14DaysCompleted = isTargetReached && daysRemaining === 0;
 
       return {
         id: p.id,
@@ -67,7 +74,10 @@ export async function GET(request: Request) {
         icon_url: p.app.icon_url || "/icons/brandlook.svg",
         opt_in_url: p.app.opt_in_url,
         store_url: p.app.store_url,
+        google_group_url: p.app.google_group_url,
         verification_question: p.app.verification_question,
+        target_tester_count: p.app.target_tester_count,
+        current_tester_count: p.app.current_tester_count,
         status: p.status, // JOINED, INVITED, CLAIMED_TESTED, APPROVED, REJECTED
         failed_attempts: p.failed_attempts,
         is_locked_out: p.is_locked_out,
@@ -79,8 +89,10 @@ export async function GET(request: Request) {
         feedback_text: p.feedback_text,
         rejection_reason: p.rejection_reason,
         earned_credits: p.status === "APPROVED" ? 1 : 0,
+        is_target_reached: isTargetReached,
         days_remaining: daysRemaining,
-        days_tested: daysSinceJoined,
+        days_tested: daysSinceTarget,
+        is_14_days_completed: is14DaysCompleted,
       };
     });
 

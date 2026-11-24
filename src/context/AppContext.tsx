@@ -32,6 +32,12 @@ export interface AppItem {
   is_owner: boolean;
   note_for_testers?: string | null;
   verification_question?: string | null;
+  google_group_url?: string | null;
+  target_reached_at?: string | null;
+  is_target_reached?: boolean;
+  is_14_days_completed?: boolean;
+  days_remaining?: number;
+  days_passed?: number;
   created_at: string;
   my_participation?: {
     id: string;

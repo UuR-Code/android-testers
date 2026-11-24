@@ -191,16 +191,61 @@ export function AuthModal() {
                   className="w-full h-full object-contain"
                 />
               </div>
-              <h2 className="text-lg font-bold text-slate-900">Giriş Yap</h2>
+              <h2 className="text-lg font-bold text-slate-900">Gmail ile Giriş Yap</h2>
               <p className="text-xs text-slate-500 mt-0.5">
-                Hesabına hızlı ve güvenli şekilde giriş yap. Şifre gerekmez.
+                Şifre gerekmez. Gmail adresine tek kullanımlık 6 haneli kod gönderilir.
               </p>
             </div>
 
-            {/* Google ile Devam Et button */}
+            {/* Gmail address input */}
+            <div className="mb-3.5">
+              <label className="block text-xs font-semibold text-slate-700 mb-1.5">
+                Gmail Adresin
+              </label>
+              <div className="relative">
+                <Mail className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+                <input
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="ornek@gmail.com"
+                  className="w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white transition-all shadow-2xs"
+                />
+              </div>
+            </div>
+
+            {/* Submit button */}
+            <button
+              onClick={() => handleSendOtp()}
+              disabled={isSending || !email}
+              className="w-full py-3 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 disabled:opacity-50 text-white rounded-2xl font-semibold text-xs shadow-md shadow-indigo-500/20 active:scale-[0.98] transition-all flex items-center justify-center gap-2 mb-3"
+            >
+              {isSending ? (
+                <>
+                  <RefreshCw className="w-4 h-4 animate-spin" />
+                  <span>Kod Gönderiliyor...</span>
+                </>
+              ) : (
+                <span>Doğrulama Kodu Gönder</span>
+              )}
+            </button>
+
+            {/* Gmail restriction notice badge */}
+            <div className="flex items-center gap-2 px-3 py-2 bg-slate-50 border border-slate-100 rounded-xl text-[11px] text-slate-500 mb-4">
+              <ShieldCheck className="w-4 h-4 text-emerald-600 shrink-0" />
+              <span>Sadece Gmail (@gmail.com) hesapları kabul edilir.</span>
+            </div>
+
+            {/* Divider */}
+            <div className="relative flex items-center justify-center my-4">
+              <div className="border-t border-slate-200 w-full" />
+              <span className="bg-white px-3 text-[11px] text-slate-400 font-medium absolute">veya tek tıkla</span>
+            </div>
+
+            {/* Google ile Hızlı Giriş (Demo) */}
             <button
               onClick={() => loginAsDemo("uur@gmail.com")}
-              className="w-full py-3 px-4 bg-white hover:bg-slate-50 border border-slate-200 text-slate-800 rounded-2xl font-medium text-xs flex items-center justify-center gap-2.5 shadow-2xs hover:shadow-xs transition-all active:scale-[0.99] mb-4"
+              className="w-full py-2.5 px-4 bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 rounded-2xl font-medium text-xs flex items-center justify-center gap-2.5 shadow-2xs hover:shadow-xs transition-all active:scale-[0.99]"
             >
               {/* Google G logo */}
               <svg className="w-4 h-4" viewBox="0 0 24 24">
@@ -221,53 +266,8 @@ export function AuthModal() {
                   d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.33 0 3.26 2.64 1.25 6.58l4.03 3.15c.95-2.83 3.6-4.98 6.72-4.98z"
                 />
               </svg>
-              <span>Google ile Devam Et</span>
+              <span>Google ile Hızlı Giriş (Demo)</span>
             </button>
-
-            {/* Divider */}
-            <div className="relative flex items-center justify-center my-4">
-              <div className="border-t border-slate-200 w-full" />
-              <span className="bg-white px-3 text-[11px] text-slate-400 font-medium absolute">veya</span>
-            </div>
-
-            {/* Gmail address input */}
-            <div className="mb-4">
-              <label className="block text-xs font-semibold text-slate-700 mb-1.5">
-                Gmail Adresin
-              </label>
-              <div className="relative">
-                <Mail className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
-                <input
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="ornek@gmail.com"
-                  className="w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white transition-all"
-                />
-              </div>
-            </div>
-
-            {/* Submit button */}
-            <button
-              onClick={() => handleSendOtp()}
-              disabled={isSending || !email}
-              className="w-full py-3 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 disabled:opacity-50 text-white rounded-2xl font-semibold text-xs shadow-md shadow-indigo-500/20 active:scale-[0.98] transition-all flex items-center justify-center gap-2"
-            >
-              {isSending ? (
-                <>
-                  <RefreshCw className="w-4 h-4 animate-spin" />
-                  <span>Kod Gönderiliyor...</span>
-                </>
-              ) : (
-                <span>Doğrulama Kodu Gönder</span>
-              )}
-            </button>
-
-            {/* Gmail restriction notice badge */}
-            <div className="mt-4 flex items-center gap-2 px-3 py-2 bg-slate-50 border border-slate-100 rounded-xl text-[11px] text-slate-500">
-              <ShieldCheck className="w-4 h-4 text-emerald-600 shrink-0" />
-              <span>Sadece Gmail (@gmail.com) hesapları ile katılım kabul edilir.</span>
-            </div>
 
             {/* Fast Demo Accounts Helper */}
             <div className="mt-5 pt-4 border-t border-slate-100">

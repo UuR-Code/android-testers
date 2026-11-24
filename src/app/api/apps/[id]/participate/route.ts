@@ -99,10 +99,14 @@ export async function POST(
         },
       });
 
+      const willReachTarget = app.current_tester_count + 1 >= app.target_tester_count;
+      const targetReachedNow = willReachTarget && !app.target_reached_at;
+
       await tx.app.update({
         where: { id: appId },
         data: {
           current_tester_count: { increment: 1 },
+          ...(targetReachedNow ? { target_reached_at: new Date() } : {}),
         },
       });
 
@@ -116,6 +120,19 @@ export async function POST(
           link: `/apps/${app.id}/manage`,
         },
       });
+
+      // Eğer 20 kişilik hedefe ulaşıldıysa 14 günlük süreci başlatan özel kutlama bildirimi
+      if (targetReachedNow) {
+        await tx.notification.create({
+          data: {
+            user_id: app.owner_id,
+            type: "SYSTEM",
+            title: "14 Günlük Kapalı Test Başladı! 🎯",
+            message: `Tebrikler! "${app.name}" uygulamanız ${app.target_tester_count} testçi hedefine ulaştı. 14 günlük zorunlu kapalı beta geri sayımı resmen başladı!`,
+            link: `/?tab=profile`,
+          },
+        });
+      }
 
       return part;
     });

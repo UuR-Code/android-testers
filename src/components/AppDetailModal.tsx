@@ -206,6 +206,43 @@ export function AppDetailModal() {
 
             {/* 4 Steps timeline */}
             <div className="space-y-3">
+              {/* Optional Google Group Step if configured */}
+              {openedApp.google_group_url && (
+                <div className="flex items-start gap-3 p-3.5 rounded-2xl bg-purple-50/80 border border-purple-200/90 shadow-2xs">
+                  <div className="w-6 h-6 rounded-full bg-purple-600 text-white flex items-center justify-center text-xs font-bold shrink-0">
+                    G
+                  </div>
+                  <div className="flex-1">
+                    <div className="flex items-center justify-between">
+                      <h5 className="text-xs font-bold text-purple-950">Google Grubuna Katıl (Hızlı Erişim)</h5>
+                      <a
+                        href={openedApp.google_group_url}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="text-[11px] font-bold text-purple-700 hover:underline flex items-center gap-0.5 bg-purple-100/90 px-2 py-0.5 rounded-md"
+                      >
+                        <span>Gruba Git</span>
+                        <ExternalLink className="w-3 h-3" />
+                      </a>
+                    </div>
+                    <p className="text-[11px] text-purple-900 mt-1 leading-relaxed">
+                      Bu uygulama Google Grubu kullanmaktadır. Gruba katıldığınız an Play Store kapalı test bağlantısı otomatik açılır!
+                    </p>
+                  </div>
+                </div>
+              )}
+
+              {/* Waiting notice if email list and not yet marked ready */}
+              {hasJoined && !openedApp.google_group_url && participationStatus === "JOINED" && (
+                <div className="p-3 bg-amber-50 border border-amber-200 rounded-2xl flex items-start gap-2.5 shadow-2xs">
+                  <Clock className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
+                  <div className="text-[11px] text-amber-900 leading-relaxed">
+                    <strong className="block font-bold">Play Console Daveti Bekleniyor:</strong>
+                    <span>Bu uygulama e-posta listesi kullanmaktadır. Geliştirici Gmail adresinizi Google Play Console kapalı test listesine eklediğinde test bağlantınız açılacak ve bildirim alacaksınız.</span>
+                  </div>
+                </div>
+              )}
+
               {/* Step 1 */}
               <div className="flex items-start gap-3 p-3 rounded-2xl bg-slate-50 border border-slate-100">
                 <div

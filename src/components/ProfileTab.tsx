@@ -17,6 +17,10 @@ import {
   Download,
   AlertCircle,
   AlertTriangle,
+  Edit3,
+  Trash2,
+  X,
+  Sparkles,
 } from "lucide-react";
 
 export function ProfileTab() {
@@ -372,11 +376,20 @@ export function ProfileTab() {
 
 // Wrapper for MyAppsModal to manage owner dashboard view
 function MyAppsModalWrapper({ onClose }: { onClose: () => void }) {
-  const { setOpenedApp, setIsTestersModalOpen, setManagingAppId, showToast } = useApp();
+  const { setOpenedApp, setIsTestersModalOpen, setManagingAppId, showToast, refreshUser } = useApp();
   const [apps, setApps] = React.useState<any[]>([]);
   const [isLoading, setIsLoading] = React.useState(true);
 
-  React.useEffect(() => {
+  // Edit app state
+  const [editingApp, setEditingApp] = React.useState<any>(null);
+  const [isSubmittingEdit, setIsSubmittingEdit] = React.useState(false);
+
+  // Delete / cancel app state
+  const [deletingApp, setDeletingApp] = React.useState<any>(null);
+  const [isDeleting, setIsDeleting] = React.useState(false);
+
+  const fetchApps = React.useCallback(() => {
+    setIsLoading(true);
     fetch("/api/my-apps")
       .then((res) => res.json())
       .then((data) => {
@@ -384,6 +397,72 @@ function MyAppsModalWrapper({ onClose }: { onClose: () => void }) {
       })
       .finally(() => setIsLoading(false));
   }, []);
+
+  React.useEffect(() => {
+    fetchApps();
+  }, [fetchApps]);
+
+  const handleSaveEdit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editingApp) return;
+
+    setIsSubmittingEdit(true);
+    try {
+      const res = await fetch(`/api/apps/${editingApp.id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: editingApp.name,
+          category: editingApp.category,
+          description: editingApp.description,
+          opt_in_url: editingApp.opt_in_url,
+          store_url: editingApp.store_url,
+          google_group_url: editingApp.google_group_url,
+          verification_question: editingApp.verification_question,
+          verification_answer: editingApp.verification_answer,
+          note_for_testers: editingApp.note_for_testers,
+        }),
+      });
+
+      const d = await res.json();
+      if (res.ok && d.success) {
+        showToast("Uygulama başarıyla güncellendi!", "success");
+        setEditingApp(null);
+        fetchApps();
+      } else {
+        showToast(d.error || "Güncelleme başarısız", "error");
+      }
+    } catch (e) {
+      showToast("Bağlantı hatası", "error");
+    } finally {
+      setIsSubmittingEdit(false);
+    }
+  };
+
+  const handleConfirmDelete = async () => {
+    if (!deletingApp) return;
+
+    setIsDeleting(true);
+    try {
+      const res = await fetch(`/api/apps/${deletingApp.id}`, {
+        method: "DELETE",
+      });
+
+      const d = await res.json();
+      if (res.ok && d.success) {
+        showToast(d.message || "İşlem başarılı", "success");
+        setDeletingApp(null);
+        await refreshUser();
+        fetchApps();
+      } else {
+        showToast(d.error || "İşlem başarısız", "error");
+      }
+    } catch (e) {
+      showToast("Bağlantı hatası", "error");
+    } finally {
+      setIsDeleting(false);
+    }
+  };
 
   return (
     <div className="fixed inset-0 z-50 bg-white flex flex-col max-w-md mx-auto shadow-2xl overflow-y-auto animate-in slide-in-from-right duration-200">
@@ -423,8 +502,12 @@ function MyAppsModalWrapper({ onClose }: { onClose: () => void }) {
                       <span className="text-[11px] text-slate-400">{app.category}</span>
                     </div>
                   </div>
-                  <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">
-                    Aktif
+                  <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full border ${
+                    app.status === "ACTIVE"
+                      ? "bg-emerald-50 text-emerald-700 border-emerald-200"
+                      : "bg-slate-100 text-slate-600 border-slate-200"
+                  }`}>
+                    {app.status === "ACTIVE" ? "Aktif" : "Durduruldu"}
                   </span>
                 </div>
 
@@ -441,6 +524,29 @@ function MyAppsModalWrapper({ onClose }: { onClose: () => void }) {
                     />
                   </div>
                 </div>
+
+                {/* 14-Day Google Play Status Card */}
+                {app.is_14_days_completed ? (
+                  <div className="p-3 bg-emerald-50 border border-emerald-200 rounded-2xl space-y-1">
+                    <div className="flex items-center gap-1.5 text-xs font-bold text-emerald-800">
+                      <Sparkles className="w-4 h-4 text-emerald-600" />
+                      <span>🎉 14 Günlük Kapalı Beta Tamamlandı!</span>
+                    </div>
+                    <p className="text-[11px] text-emerald-700 leading-relaxed">
+                      Zorunlu 14 günlük test süreci başarıyla doldu! Google Play Console üzerinden uygulamanızı Üretim (Production) onayına gönderebilirsiniz.
+                    </p>
+                  </div>
+                ) : app.is_target_reached ? (
+                  <div className="p-2.5 bg-indigo-50 border border-indigo-200/80 rounded-2xl flex items-center justify-between text-[11px]">
+                    <span className="font-semibold text-indigo-950">14 Günlük Süreç:</span>
+                    <span className="font-bold text-indigo-700">{app.days_passed}. gün ({app.days_remaining} gün kaldı)</span>
+                  </div>
+                ) : (
+                  <div className="p-2.5 bg-slate-50 border border-slate-200/80 rounded-2xl flex items-center justify-between text-[11px] text-slate-600">
+                    <span>14 Günlük Süreç:</span>
+                    <span className="font-medium text-slate-700">{app.current_tester_count}/20 testçi (20 olunca başlar)</span>
+                  </div>
+                )}
 
                 {/* 3 Summary boxes (Matches Screen 10) */}
                 <div className="grid grid-cols-3 gap-2 pt-1">
@@ -510,12 +616,198 @@ function MyAppsModalWrapper({ onClose }: { onClose: () => void }) {
                     <span>CSV İndir (Gmail Listesi)</span>
                     <ChevronRight className="w-4 h-4 text-slate-400" />
                   </a>
+
+                  {/* Uygulamayı Düzenle > */}
+                  <button
+                    onClick={() => setEditingApp({ ...app })}
+                    className="w-full py-2.5 flex items-center justify-between text-xs font-bold text-slate-800 hover:text-indigo-600 transition-colors"
+                  >
+                    <div className="flex items-center gap-2">
+                      <Edit3 className="w-3.5 h-3.5 text-indigo-600" />
+                      <span>Uygulamayı Düzenle</span>
+                    </div>
+                    <ChevronRight className="w-4 h-4 text-slate-400" />
+                  </button>
+
+                  {/* Yayından Kaldır / İptal Et > */}
+                  <button
+                    onClick={() => setDeletingApp(app)}
+                    className="w-full py-2.5 flex items-center justify-between text-xs font-bold text-rose-600 hover:text-rose-700 transition-colors"
+                  >
+                    <div className="flex items-center gap-2">
+                      <Trash2 className="w-3.5 h-3.5 text-rose-600" />
+                      <span>{app.current_tester_count === 0 ? "Uygulamayı İptal Et (+10 Kredi İadesi)" : "Yayından Kaldır"}</span>
+                    </div>
+                    <ChevronRight className="w-4 h-4 text-rose-400" />
+                  </button>
                 </div>
               </div>
             );
           })
         )}
       </div>
+
+      {/* EDIT APP MODAL */}
+      {editingApp && (
+        <div className="fixed inset-0 z-60 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs">
+          <div className="relative w-full max-w-sm bg-white rounded-3xl p-5 shadow-2xl max-h-[90vh] overflow-y-auto">
+            <div className="flex items-center justify-between pb-3 border-b border-slate-100 mb-3">
+              <h4 className="font-bold text-sm text-slate-800">Uygulamayı Düzenle</h4>
+              <button onClick={() => setEditingApp(null)} className="p-1 rounded-full text-slate-400 hover:text-slate-600">
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            <form onSubmit={handleSaveEdit} className="space-y-3">
+              <div>
+                <label className="block text-[11px] font-bold text-slate-700 mb-1">Uygulama Adı *</label>
+                <input
+                  type="text"
+                  required
+                  value={editingApp.name}
+                  onChange={(e) => setEditingApp({ ...editingApp, name: e.target.value })}
+                  className="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500 shadow-2xs"
+                />
+              </div>
+
+              <div>
+                <label className="block text-[11px] font-bold text-slate-700 mb-1">Kategori</label>
+                <select
+                  value={editingApp.category}
+                  onChange={(e) => setEditingApp({ ...editingApp, category: e.target.value })}
+                  className="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500 shadow-2xs"
+                >
+                  <option value="Fotoğraf • Yapay Zeka">Fotoğraf • Yapay Zeka</option>
+                  <option value="Oyun">Oyun</option>
+                  <option value="Verimlilik">Verimlilik</option>
+                  <option value="Alışveriş & Fiyat">Alışveriş & Fiyat</option>
+                  <option value="Sağlık & Spor">Sağlık & Spor</option>
+                  <option value="Eğitim">Eğitim</option>
+                  <option value="Finans">Finans</option>
+                  <option value="Sosyal">Sosyal</option>
+                  <option value="Genel">Genel</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-[11px] font-bold text-slate-700 mb-1">Play Store Test Linki *</label>
+                <input
+                  type="url"
+                  required
+                  value={editingApp.opt_in_url}
+                  onChange={(e) => setEditingApp({ ...editingApp, opt_in_url: e.target.value })}
+                  className="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500 shadow-2xs"
+                />
+              </div>
+
+              <div>
+                <label className="block text-[11px] font-bold text-purple-900 mb-1">Google Grubu Bağlantısı (Önerilen)</label>
+                <input
+                  type="url"
+                  value={editingApp.google_group_url || ""}
+                  onChange={(e) => setEditingApp({ ...editingApp, google_group_url: e.target.value })}
+                  placeholder="https://groups.google.com/g/ornek-grup"
+                  className="w-full p-2.5 bg-purple-50/50 border border-purple-200 rounded-xl text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-purple-500 shadow-2xs"
+                />
+              </div>
+
+              <div>
+                <label className="block text-[11px] font-bold text-slate-700 mb-1">Kontrol Sorusu *</label>
+                <input
+                  type="text"
+                  required
+                  value={editingApp.verification_question || ""}
+                  onChange={(e) => setEditingApp({ ...editingApp, verification_question: e.target.value })}
+                  className="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500 shadow-2xs"
+                />
+              </div>
+
+              <div>
+                <label className="block text-[11px] font-bold text-slate-700 mb-1">Doğru Cevap *</label>
+                <input
+                  type="text"
+                  required
+                  value={editingApp.verification_answer || ""}
+                  onChange={(e) => setEditingApp({ ...editingApp, verification_answer: e.target.value })}
+                  className="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500 shadow-2xs"
+                />
+              </div>
+
+              <div>
+                <label className="block text-[11px] font-bold text-slate-700 mb-1">Kısa Açıklama</label>
+                <textarea
+                  rows={2}
+                  value={editingApp.description || ""}
+                  onChange={(e) => setEditingApp({ ...editingApp, description: e.target.value })}
+                  className="w-full p-2 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500 shadow-2xs resize-none"
+                />
+              </div>
+
+              <div className="flex gap-2 pt-2">
+                <button
+                  type="button"
+                  onClick={() => setEditingApp(null)}
+                  className="flex-1 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs rounded-xl"
+                >
+                  İptal
+                </button>
+                <button
+                  type="submit"
+                  disabled={isSubmittingEdit}
+                  className="flex-1 py-2.5 bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 text-white font-bold text-xs rounded-xl shadow-md shadow-indigo-500/20"
+                >
+                  {isSubmittingEdit ? "Kaydediliyor..." : "Kaydet"}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* DELETE / CANCEL CONFIRMATION MODAL */}
+      {deletingApp && (
+        <div className="fixed inset-0 z-60 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs">
+          <div className="relative w-full max-w-xs bg-white rounded-3xl p-5 shadow-2xl">
+            <h4 className="text-sm font-bold text-slate-900 mb-2">
+              {deletingApp.current_tester_count === 0 ? "Uygulamayı İptal Et & İade Al" : "Yayından Kaldır"}
+            </h4>
+
+            {deletingApp.current_tester_count === 0 ? (
+              <div className="p-3 bg-emerald-50 border border-emerald-200 rounded-2xl text-[11px] text-emerald-800 mb-4 space-y-1">
+                <strong className="block font-bold">10 Kredi İadesi Yapılacak:</strong>
+                <span>Bu uygulamaya henüz hiç testçi katılmadı. Uygulamayı iptal ettiğinizde harcanan <strong>10 kredi</strong> anında bakiyenize iade edilecektir.</span>
+              </div>
+            ) : (
+              <div className="p-3 bg-amber-50 border border-amber-200 rounded-2xl text-[11px] text-amber-800 mb-4 space-y-1">
+                <strong className="block font-bold">Kredi İadesi Yapılamaz:</strong>
+                <span>Bu uygulamaya şu ana kadar <strong>{deletingApp.current_tester_count} testçi</strong> katılmıştır. Yayından kaldırdığınızda yeni katılım alınmaz ancak harcanan kredi iade edilmez.</span>
+              </div>
+            )}
+
+            <p className="text-xs text-slate-600 mb-4">
+              <strong>"{deletingApp.name}"</strong> uygulamasını kaldırmak istediğinize emin misiniz?
+            </p>
+
+            <div className="flex gap-2">
+              <button
+                type="button"
+                onClick={() => setDeletingApp(null)}
+                className="flex-1 py-2 bg-slate-100 text-slate-700 text-xs font-bold rounded-xl"
+              >
+                Vazgeç
+              </button>
+              <button
+                type="button"
+                onClick={handleConfirmDelete}
+                disabled={isDeleting}
+                className="flex-1 py-2 bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold rounded-xl"
+              >
+                {isDeleting ? "İşleniyor..." : deletingApp.current_tester_count === 0 ? "İptal Et & İade Al" : "Kaldır"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

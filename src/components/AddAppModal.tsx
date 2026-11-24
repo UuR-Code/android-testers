@@ -40,6 +40,7 @@ export function AddAppModal() {
   const [description, setDescription] = useState("");
   const [optInUrl, setOptInUrl] = useState("");
   const [storeUrl, setStoreUrl] = useState("");
+  const [googleGroupUrl, setGoogleGroupUrl] = useState("");
   const [noteForTesters, setNoteForTesters] = useState("");
   const [verificationQuestion, setVerificationQuestion] = useState("");
   const [verificationAnswer, setVerificationAnswer] = useState("");
@@ -87,6 +88,7 @@ export function AddAppModal() {
           description: description.trim(),
           opt_in_url: optInUrl.trim(),
           store_url: storeUrl.trim() || null,
+          google_group_url: googleGroupUrl.trim() || null,
           note_for_testers: noteForTesters.trim() || null,
           verification_question: verificationQuestion.trim() || null,
           verification_answer: verificationAnswer.trim() || null,
@@ -235,6 +237,31 @@ export function AddAppModal() {
           <span className="text-[10px] text-slate-400 mt-1 block">
             Google Play Console kapalı test web bağlantısı (opt-in linki).
           </span>
+        </div>
+
+        {/* 4.1 Google Grubu Bağlantısı (Tavsiye Edilen) */}
+        <div className="p-3.5 bg-gradient-to-r from-purple-50/80 to-indigo-50/80 border border-purple-200/80 rounded-2xl space-y-2">
+          <div className="flex items-center justify-between">
+            <label className="block text-xs font-bold text-purple-950">
+              Google Grubu Bağlantısı (Önerilen)
+            </label>
+            <span className="text-[10px] font-bold bg-purple-200 text-purple-800 px-2 py-0.5 rounded-full">
+              Otomatik Erişim
+            </span>
+          </div>
+          <div className="relative">
+            <LinkIcon className="w-4 h-4 text-purple-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+            <input
+              type="url"
+              value={googleGroupUrl}
+              onChange={(e) => setGoogleGroupUrl(e.target.value)}
+              placeholder="https://groups.google.com/g/brandlook-testers"
+              className="w-full pl-10 pr-4 py-3 bg-white border border-purple-200 rounded-2xl text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-500 shadow-2xs"
+            />
+          </div>
+          <p className="text-[10px] text-purple-900 leading-relaxed">
+            💡 <strong>Neden Önerilir?</strong> Google Grubu açıp Play Console'a bu grubu 1 kez eklerseniz, testçiler tek tıkla gruba girerek hemen teste başlar. Testçileri Play Console'a tek tek elle eklemeniz gerekmez!
+          </p>
         </div>
 
         {/* 5. Play Store Direct Download Link (Optional) */}
