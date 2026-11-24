@@ -17,7 +17,7 @@ import {
 } from "lucide-react";
 
 export function AdminModal() {
-  const { isAdminModalOpen, setIsAdminModalOpen, showToast, refreshUser } = useApp();
+  const { isAdminModalOpen, setIsAdminModalOpen, showToast, refreshUser, refreshSettings } = useApp();
 
   const [activeTab, setActiveTab] = useState<"stats" | "settings" | "users" | "apps" | "emails">("stats");
   const [data, setData] = useState<any>(null);
@@ -30,6 +30,8 @@ export function AdminModal() {
     target_tester_count: 20,
     max_active_apps_per_user: 5,
     reminder_cooldown_hours: 24,
+    universal_google_group_email: "android-test-havuzu@googlegroups.com",
+    universal_google_group_url: "https://groups.google.com/g/android-test-havuzu",
   });
 
   // Credit adjustment state
@@ -51,6 +53,10 @@ export function AdminModal() {
             target_tester_count: json.settings.target_tester_count,
             max_active_apps_per_user: json.settings.max_active_apps_per_user,
             reminder_cooldown_hours: json.settings.reminder_cooldown_hours,
+            universal_google_group_email:
+              json.settings.universal_google_group_email || "android-test-havuzu@googlegroups.com",
+            universal_google_group_url:
+              json.settings.universal_google_group_url || "https://groups.google.com/g/android-test-havuzu",
           });
         }
       } else {
@@ -86,6 +92,7 @@ export function AdminModal() {
       if (res.ok && d.success) {
         showToast("Sistem ayarları güncellendi!", "success");
         await fetchAdminData();
+        await refreshSettings();
       } else {
         showToast(d.error || "Ayar kaydedilemedi", "error");
       }
@@ -296,6 +303,40 @@ export function AdminModal() {
                     }
                     className="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-800"
                   />
+                </div>
+
+                <div className="pt-2 border-t border-slate-100 space-y-3">
+                  <span className="text-[11px] font-bold text-indigo-700 uppercase tracking-wider block">
+                    Ortak Platform Google Grubu
+                  </span>
+                  <div>
+                    <label className="block text-xs font-bold text-slate-700 mb-1">
+                      Ortak Grup E-posta Adresi
+                    </label>
+                    <input
+                      type="email"
+                      value={settingsForm.universal_google_group_email}
+                      onChange={(e) =>
+                        setSettingsForm({ ...settingsForm, universal_google_group_email: e.target.value })
+                      }
+                      placeholder="android-test-havuzu@googlegroups.com"
+                      className="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium text-slate-800"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-bold text-slate-700 mb-1">
+                      Ortak Grup Katılım Linki (URL)
+                    </label>
+                    <input
+                      type="url"
+                      value={settingsForm.universal_google_group_url}
+                      onChange={(e) =>
+                        setSettingsForm({ ...settingsForm, universal_google_group_url: e.target.value })
+                      }
+                      placeholder="https://groups.google.com/g/android-test-havuzu"
+                      className="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium text-slate-800"
+                    />
+                  </div>
                 </div>
 
                 <button

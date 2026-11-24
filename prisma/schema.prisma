@@ -124,12 +124,14 @@ model EmailLog {
 }
 
 model SystemSetting {
-  id                       String           @id @default("default")
-  app_creation_cost        Int              @default(10)
-  reward_per_approved_test Int              @default(1)
-  target_tester_count      Int              @default(20)
-  max_active_apps_per_user Int              @default(5)
-  reminder_cooldown_hours  Int              @default(24)
-  allow_new_registrations  Boolean          @default(true)
-  updated_at               DateTime         @updatedAt
+  id                           String   @id @default("default")
+  app_creation_cost            Int      @default(10)
+  reward_per_approved_test     Int      @default(1)
+  target_tester_count          Int      @default(20)
+  max_active_apps_per_user     Int      @default(5)
+  reminder_cooldown_hours      Int      @default(24)
+  allow_new_registrations      Boolean  @default(true)
+  universal_google_group_email String   @default("android-test-havuzu@googlegroups.com")
+  universal_google_group_url   String   @default("https://groups.google.com/g/android-test-havuzu")
+  updated_at                   DateTime @updatedAt
 }

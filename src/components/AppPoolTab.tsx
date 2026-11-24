@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useCallback } from "react";
 import Image from "next/image";
 import { useApp, AppItem } from "@/context/AppContext";
-import { Coins, Plus, Search, ChevronRight, Check, AlertCircle, RefreshCw, Smartphone } from "lucide-react";
+import { Coins, Plus, Search, ChevronRight, Check, AlertCircle, RefreshCw, Smartphone, ExternalLink } from "lucide-react";
 
 export function AppPoolTab() {
   const {
@@ -16,7 +16,17 @@ export function AppPoolTab() {
     triggerConfetti,
     setSuccessModalData,
     setIsSuccessModalOpen,
+    universalGroupUrl,
   } = useApp();
+
+  const [hasJoinedGroup, setHasJoinedGroup] = useState(true);
+
+  useEffect(() => {
+    if (user?.id && typeof window !== "undefined") {
+      const saved = localStorage.getItem(`joined_universal_group_${user.id}`);
+      setHasJoinedGroup(saved === "true");
+    }
+  }, [user?.id]);
 
   const [apps, setApps] = useState<AppItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -145,6 +155,40 @@ export function AppPoolTab() {
               <span className="text-[10px] text-indigo-700 bg-indigo-100/70 font-semibold px-2 py-0.5 rounded-full">
                 Uygulama Ekleme: 10 Kredi
               </span>
+            </div>
+          </div>
+        )}
+
+        {/* Universal Google Group Prompt Banner */}
+        {user && !hasJoinedGroup && (
+          <div className="mt-3 p-3.5 bg-gradient-to-r from-emerald-50 to-teal-50 border border-emerald-200/90 rounded-2xl space-y-2.5 shadow-2xs">
+            <p className="text-xs font-bold text-emerald-950 leading-snug">
+              🚀 Play Store testlerine beklemeden anında katılabilmek için Ortak Google Test Grubumuza katılın.
+            </p>
+            <div className="flex items-center gap-2">
+              <a
+                href={universalGroupUrl}
+                target="_blank"
+                rel="noreferrer"
+                className="flex-1 py-2 px-3 bg-emerald-600 hover:bg-emerald-700 text-white text-[11px] font-bold rounded-xl flex items-center justify-center gap-1 transition-colors"
+              >
+                <span>Ortak Gruba Katıl</span>
+                <ExternalLink className="w-3 h-3" />
+              </a>
+              <button
+                type="button"
+                onClick={() => {
+                  if (user?.id) {
+                    localStorage.setItem(`joined_universal_group_${user.id}`, "true");
+                  }
+                  setHasJoinedGroup(true);
+                  showToast("Harika! Artık tüm testlere anında erişebilirsiniz.", "success");
+                }}
+                className="py-2 px-3 bg-white hover:bg-emerald-100 text-emerald-800 border border-emerald-200 text-[11px] font-bold rounded-xl flex items-center gap-1 transition-colors"
+              >
+                <Check className="w-3.5 h-3.5" />
+                <span>Gruba Katıldım</span>
+              </button>
             </div>
           </div>
         )}

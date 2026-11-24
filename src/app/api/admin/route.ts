@@ -133,6 +133,8 @@ export async function POST(request: Request) {
         target_tester_count,
         max_active_apps_per_user,
         reminder_cooldown_hours,
+        universal_google_group_email,
+        universal_google_group_url,
       } = body.settings;
 
       const updated = await prisma.systemSetting.upsert({
@@ -143,6 +145,10 @@ export async function POST(request: Request) {
           target_tester_count: Number(target_tester_count) || 20,
           max_active_apps_per_user: Number(max_active_apps_per_user) || 5,
           reminder_cooldown_hours: Number(reminder_cooldown_hours) || 24,
+          universal_google_group_email:
+            universal_google_group_email?.trim() || "android-test-havuzu@googlegroups.com",
+          universal_google_group_url:
+            universal_google_group_url?.trim() || "https://groups.google.com/g/android-test-havuzu",
         },
         create: {
           id: "default",
@@ -151,6 +157,10 @@ export async function POST(request: Request) {
           target_tester_count: Number(target_tester_count) || 20,
           max_active_apps_per_user: Number(max_active_apps_per_user) || 5,
           reminder_cooldown_hours: Number(reminder_cooldown_hours) || 24,
+          universal_google_group_email:
+            universal_google_group_email?.trim() || "android-test-havuzu@googlegroups.com",
+          universal_google_group_url:
+            universal_google_group_url?.trim() || "https://groups.google.com/g/android-test-havuzu",
         },
       });
 

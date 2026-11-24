@@ -13,6 +13,7 @@ import {
   RefreshCw,
   Check,
   ShieldCheck,
+  Copy,
 } from "lucide-react";
 
 const PRESET_ICONS = [
@@ -33,7 +34,10 @@ export function AddAppModal() {
     refreshUser,
     triggerConfetti,
     setActiveTab,
+    universalGroupEmail,
   } = useApp();
+
+  const [copiedGroup, setCopiedGroup] = useState(false);
 
   const [name, setName] = useState("");
   const [category, setCategory] = useState("Fotoğraf • Yapay Zeka");
@@ -239,29 +243,64 @@ export function AddAppModal() {
           </span>
         </div>
 
-        {/* 4.1 Google Grubu Bağlantısı (Tavsiye Edilen) */}
-        <div className="p-3.5 bg-gradient-to-r from-purple-50/80 to-indigo-50/80 border border-purple-200/80 rounded-2xl space-y-2">
-          <div className="flex items-center justify-between">
-            <label className="block text-xs font-bold text-purple-950">
-              Google Grubu Bağlantısı (Önerilen)
+        {/* 4.1 Ortak Platform Test Grubu (Önerilen & Otomatik) */}
+        <div className="p-3.5 bg-gradient-to-r from-emerald-50/90 to-teal-50/80 border border-emerald-200 rounded-2xl space-y-2.5">
+          <div className="flex items-center justify-between gap-2">
+            <label className="block text-xs font-bold text-emerald-950">
+              Google Play Console Test Grubu Adresi (Tek Adres)
             </label>
-            <span className="text-[10px] font-bold bg-purple-200 text-purple-800 px-2 py-0.5 rounded-full">
-              Otomatik Erişim
+            <span className="text-[10px] font-bold bg-emerald-200 text-emerald-900 px-2 py-0.5 rounded-full shrink-0">
+              Önerilen
+            </span>
+          </div>
+
+          <div className="flex items-center gap-2 bg-white border border-emerald-200 rounded-xl p-2 shadow-2xs">
+            <input
+              type="text"
+              readOnly
+              value={universalGroupEmail}
+              className="flex-1 bg-transparent text-xs font-bold text-slate-800 outline-none select-all px-1"
+            />
+            <button
+              type="button"
+              onClick={() => {
+                navigator.clipboard.writeText(universalGroupEmail);
+                setCopiedGroup(true);
+                showToast("Ortak grup e-postası kopyalandı!", "success");
+                setTimeout(() => setCopiedGroup(false), 2500);
+              }}
+              className="flex items-center gap-1 px-2.5 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white text-[11px] font-bold rounded-lg transition-colors shrink-0"
+            >
+              {copiedGroup ? <Check className="w-3.5 h-3.5" /> : <Copy className="w-3.5 h-3.5" />}
+              <span>{copiedGroup ? "Kopyalandı" : "Kopyala"}</span>
+            </button>
+          </div>
+
+          <p className="text-[10px] text-emerald-900 leading-relaxed">
+            Google Play Console &gt; Kapalı Test &gt; Test Edenler sekmesinde <strong>&quot;Google Grupları&quot;</strong> seçeneğine bu e-postayı ekleyin. Başka hiçbir testçiyi tek tek eklemeniz gerekmez, havuzdaki tüm testçiler anında teste başlayabilir!
+          </p>
+        </div>
+
+        {/* 4.2 Özel Google Grubu Bağlantısı (İsteğe Bağlı) */}
+        <div className="p-3.5 bg-slate-50 border border-slate-200/80 rounded-2xl space-y-2">
+          <div className="flex items-center justify-between">
+            <label className="block text-xs font-bold text-slate-800">
+              Özel Google Grubu Bağlantısı (İsteğe Bağlı)
+            </label>
+            <span className="text-[10px] font-semibold bg-slate-200 text-slate-600 px-2 py-0.5 rounded-full">
+              Opsiyonel
             </span>
           </div>
           <div className="relative">
-            <LinkIcon className="w-4 h-4 text-purple-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+            <LinkIcon className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
             <input
               type="url"
               value={googleGroupUrl}
               onChange={(e) => setGoogleGroupUrl(e.target.value)}
-              placeholder="https://groups.google.com/g/brandlook-testers"
-              className="w-full pl-10 pr-4 py-3 bg-white border border-purple-200 rounded-2xl text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-500 shadow-2xs"
+              placeholder="Sadece kendi özel grubunuzu kullanacaksanız girin"
+              className="w-full pl-10 pr-4 py-2.5 bg-white border border-slate-200 rounded-xl text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 shadow-2xs"
             />
           </div>
-          <p className="text-[10px] text-purple-900 leading-relaxed">
-            💡 <strong>Neden Önerilir?</strong> Google Grubu açıp Play Console'a bu grubu 1 kez eklerseniz, testçiler tek tıkla gruba girerek hemen teste başlar. Testçileri Play Console'a tek tek elle eklemeniz gerekmez!
-          </p>
         </div>
 
         {/* 5. Play Store Direct Download Link (Optional) */}

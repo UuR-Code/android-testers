@@ -101,6 +101,10 @@ interface AppContextType {
   // View mode
   isMobileFrame: boolean;
   setIsMobileFrame: (val: boolean) => void;
+  // Universal Platform Group
+  universalGroupEmail: string;
+  universalGroupUrl: string;
+  refreshSettings: () => Promise<void>;
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -126,6 +130,23 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
 
   // View frame (mobile simulator on desktop or responsive)
   const [isMobileFrame, setIsMobileFrame] = useState(false);
+
+  // Universal Google Group
+  const [universalGroupEmail, setUniversalGroupEmail] = useState("android-test-havuzu@googlegroups.com");
+  const [universalGroupUrl, setUniversalGroupUrl] = useState("https://groups.google.com/g/android-test-havuzu");
+
+  const refreshSettings = useCallback(async () => {
+    try {
+      const res = await fetch(`/api/settings?_t=${Date.now()}`, { cache: "no-store" });
+      if (res.ok) {
+        const data = await res.json();
+        if (data.universal_google_group_email) setUniversalGroupEmail(data.universal_google_group_email);
+        if (data.universal_google_group_url) setUniversalGroupUrl(data.universal_google_group_url);
+      }
+    } catch {
+      // keep defaults
+    }
+  }, []);
 
   // Toasts
   const [toasts, setToasts] = useState<Toast[]>([]);
@@ -176,7 +197,8 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     refreshUser();
-  }, [refreshUser]);
+    refreshSettings();
+  }, [refreshUser, refreshSettings]);
 
   const logout = async () => {
     try {
@@ -255,6 +277,9 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
         triggerConfetti,
         isMobileFrame,
         setIsMobileFrame,
+        universalGroupEmail,
+        universalGroupUrl,
+        refreshSettings,
       }}
     >
       {children}
