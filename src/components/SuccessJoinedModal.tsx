@@ -11,6 +11,7 @@ export function SuccessJoinedModal() {
     successModalData,
     setActiveTab,
     setOpenedApp,
+    universalGroupUrl,
   } = useApp();
 
   if (!isSuccessModalOpen || !successModalData) return null;
@@ -67,9 +68,24 @@ export function SuccessJoinedModal() {
             </div>
             <div className="flex items-start gap-2">
               <span className="w-4 h-4 rounded-full bg-indigo-200/80 text-indigo-800 text-[10px] font-bold flex items-center justify-center shrink-0 mt-0.5">4</span>
-              <span>"Test Ettim" butonuna basarak onay ve kredi bekle.</span>
+              <span>&quot;Testi Tamamla&quot; butonuna basıp kontrol sorusunu yanıtlayarak anında +1 kredi kazan.</span>
             </div>
           </div>
+        </div>
+
+        {/* Universal Group Quick Link */}
+        <div className="mb-4 p-2.5 bg-emerald-50 border border-emerald-200 rounded-xl flex items-center justify-between gap-2 text-left">
+          <span className="text-[11px] font-semibold text-emerald-900">
+            Play Store linki açılmazsa Ortak Test Grubuna katıl:
+          </span>
+          <a
+            href={universalGroupUrl}
+            target="_blank"
+            rel="noreferrer"
+            className="text-[11px] font-bold text-emerald-700 bg-white border border-emerald-200 px-2.5 py-1 rounded-lg shrink-0 hover:bg-emerald-100 transition-colors"
+          >
+            Gruba Git ↗
+          </a>
         </div>
 
         {/* Action Buttons */}

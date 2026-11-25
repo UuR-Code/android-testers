@@ -98,7 +98,15 @@ export function MyTestsTab() {
     }
   };
 
-  const getStatusBadge = (status: TestItem["status"]) => {
+  const getStatusBadge = (status: TestItem["status"], isLockedOut?: boolean) => {
+    if (isLockedOut) {
+      return (
+        <span className="text-[10px] font-bold px-2.5 py-1 rounded-full bg-rose-50 text-rose-700 border border-rose-200/80 flex items-center gap-1">
+          <AlertCircle className="w-3 h-3 text-rose-600" />
+          <span>Men Edildi</span>
+        </span>
+      );
+    }
     switch (status) {
       case "APPROVED":
         return (
@@ -298,7 +306,7 @@ export function MyTestsTab() {
                   </div>
                 </div>
 
-                {getStatusBadge(test.status)}
+                {getStatusBadge(test.status, test.is_locked_out)}
               </div>
 
               {/* 14 Day closed beta tracking banner (Starts when target 20 testers reached) */}
@@ -342,7 +350,12 @@ export function MyTestsTab() {
                   <ExternalLink className="w-3.5 h-3.5" />
                 </a>
 
-                {test.status === "JOINED" || test.status === "INVITED" ? (
+                {test.is_locked_out ? (
+                  <span className="text-[11px] font-bold text-rose-600 flex items-center gap-1">
+                    <AlertCircle className="w-3.5 h-3.5" />
+                    <span>2 Hatalı Cevap — Kapatıldı</span>
+                  </span>
+                ) : test.status === "JOINED" || test.status === "INVITED" ? (
                   <button
                     onClick={(e) => handleOpenFeedback(test, e)}
                     className="py-1.5 px-3 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs rounded-xl shadow-2xs active:scale-95 transition-all flex items-center gap-1"

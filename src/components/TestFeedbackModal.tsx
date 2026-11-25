@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import { useApp } from "@/context/AppContext";
 import { ArrowLeft, Check, AlertCircle, Lightbulb, RefreshCw, X, ShieldCheck } from "lucide-react";
@@ -22,6 +22,14 @@ export function TestFeedbackModal() {
   const [feedbackText, setFeedbackText] = useState("");
   const [verificationAnswer, setVerificationAnswer] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  useEffect(() => {
+    if (isFeedbackModalOpen) {
+      setFeedbackType("NO_PROBLEM");
+      setFeedbackText("");
+      setVerificationAnswer("");
+    }
+  }, [isFeedbackModalOpen, selectedParticipationApp?.id]);
 
   if (!isFeedbackModalOpen || !selectedParticipationApp) return null;
 
